@@ -1,0 +1,69 @@
+\documentclass[12pt]{aghdpl}
+% \documentclass[language=en,11pt]{aghdpl}  % praca w języku angielskim
+
+%---------------------------------------------------------------------------
+
+\author{Michał Machura}
+\shortauthor{M. Machura}
+
+%\titlePL{Przygotowanie bardzo długiej i pasjonującej pracy dyplomowej w~systemie~\LaTeX}
+%\titleEN{Preparation of a very long and fascinating bachelor or master thesis in \LaTeX}
+
+\titlePL{Detekcja obiektów z wykorzystaniem głębokich sieci neuronowych zrealizowana na wbudowanej platformie obliczeniowej}
+\titleEN{Object detection using deep neural networks implemented on an embedded computing platform}
+
+
+\shorttitlePL{Detekcja z wykorzystaniem DNN zrealizowana na wbudowanej platformie obliczeniowej} % skrócona wersja tytułu jeśli jest bardzo długi
+% \shorttitleEN{Detection using DNN implemted on an embeded computing platform}
+
+
+% Dopuszczalne wartości[1,2]:
+% * "Projekt dyplomowy" - na koniec studiów I stopnia
+% * "Praca dyplomowa" - na koniec studiów II stopnia
+% [1] Zasady dyplomowania w roku akademickim 2020/2021 (Decyzja Dziekana WEAIiIB nr 16/2020 z dnia 9 grudnia 2020 roku)
+% [2] Załącznik nr 1a) do Decyzji nr 16/2020 Dziekana Wydziału EAIiIB z dnia 09 grudnia 2020 r.
+
+\thesistype{Praca dyplomowa}
+%\thesistype{Master of Science Thesis}
+
+\supervisor{dr inż. Tomasz Kryjak}
+
+\degreeprogramme{Automatyka i Robotyka}
+%\degreeprogramme{Automatics and Robotics}
+
+\date{2021}
+
+%\department{Katedra Informatyki Stosowanej}
+%\department{Department of Applied Computer Science}
+
+\faculty{Wydział Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej}
+%\faculty{Faculty of Electrical Engineering, Automatics, Computer Science and Biomedical Engineering}
+
+% \acknowledgements{Serdecznie dziękuję }
+
+
+\begin{document}
+
+	\titlepages
+	\RedefinePlainStyle
+	
+	\setcounter{tocdepth}{2}
+	\tableofcontents
+	\clearpage
+	
+	\include{rozdzial1}
+	\include{rozdzial2}
+	\include{rozdzial3}
+	\include{rozdzial4}
+	\include{rozdzial5}
+	\include{rozdzial6}
+
+	% itd.
+	% \appendix
+	% \include{dodatekA}
+	% \include{dodatekB}
+	% itd.
+	
+	\printbibliography
+
+\end{document}

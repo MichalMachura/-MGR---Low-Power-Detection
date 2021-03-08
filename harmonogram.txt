@@ -1,0 +1,20 @@
+
+Część praktyczna:
+1. Poznanie Brevitas.
+2. Wybór architektur-/y
+3. Trening z kwantyzacją - Brevitas.
+4. FINN + sprzętowa ewaluacja wstepna (jeżeli będzie dostępna już płytka)
+5. Vitis AI- ucznie na float, kwantyzacja, ewaluacja sprzętowa.
+6. HLS4ml, może DNN builder
+7. Wybór najlepszego rozwiązania
+
+Część teoretyczna:
+1. Opis wymagań(ocena, platforma, zbiór danych)
+2. Opis rozwiązań z poprzednich edycji.
+3. Przegląd QNN, BNN.
+3. Opis narzędzi(Vitis AI, Brevitas, FINN, hsl4ml...)
+4. Propozycje architektur + trening.
+5. Ewaluacja sprzętowa.
+6. Próby optymalizacji wybranym algorytmem np. ewolucyjnym.
+7. Podsumowanie.
+8. Wstęp.
