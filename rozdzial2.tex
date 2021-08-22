@@ -1,4 +1,4 @@
-\chapter{Analiza problemu}
+\chapter{Analiza wymagań konkursu DAC SDC 2021}
 \label{cha:Analiza probemu}
 
 Opracowywany system powstaje na potrzeby konkursu \emph{Design Automation Conference System Design Contest 2021} (DAC SDC)
@@ -10,9 +10,8 @@ a także dostępne narzędzia wspomagające docelową implementację.
 
 
 \section{Wymagania}
-Ze względu, iż opracowywany system powstaje na potrzeby konkursu, 
-musi on spełniać stawiane założenia i wymagania.
-Zadaniem jest detekcja siecią neuronową pojedynczych obiektów w sekwencjach zarejestrowanych podczas lotu dronem.
+Ze względu, iż opracowywany system powstaje na potrzeby konkursu, musi on spełniać stawiane założenia i wymagania.
+Zadaniem jest detekcja siecią neuronową pojedynczych obiektów w sekwencjach zarejestrowanych podczas lotu drona.
 Organizatorzy dostarczają zbiór treningowy składający się z obrazów o wymiarach 640 pikseli szerokości na 360 pikseli wysokości. Zbiór składa się z ponad 90 tysięcy obrazów, wchodzących w skład 95 sekwencji podzielonych na 12 kategorii. Na rysunku \ref{fig:sample_images} przedstawiono przykładowe obrazy znajdujące się w zbiorze uczącym wraz z zaznaczonymi obiektami detekcji.
 \begin{figure}
     \centering
@@ -70,7 +69,7 @@ Sam układ \emph{Xilinx Zynq UltraScale+ MPSoC ZU3EG A484} jest układem typu So
     \includegraphics[width=\linewidth]{images/ultra96v2.png}
     \caption{Płytka \emph{Avnet Ultra96 V2}. Źródło \cite{avnet_ultra96}.}
     \label{fig:ultra96}
-\end{figure}
+\end{figure}\section{Architektura wstępna}
  
 
 \section{Przegląd rozwiązań}
@@ -123,7 +122,7 @@ Poniżej wymieniono wybrane narzędzia wspomagające sprzętową implementację.
     \item \emph{hls4ml}\cite{hls4ml} - biblioteka dokonująca konwersji modelu QNN do zapisu z użyciem języka HLS. 
     
     \item \emph{Vitis AI}\cite{vitis_ai} - środowisko pozwalające na przeprowadzenie kwantyzacji, optymalizacji architektury sieci oraz sterowania procesem akceleracji poprzez stosowne biblioteki C++/Python. Jest to środowisko rozwijane przez firmę \emph{Xilinx}
-    Wykorzystywana jest tutaj akceleracja z wykorzystaniem generycznego  DPU (ang. Deep Processing Unit) możliwego do konfiguracji.
+    Wykorzystywana jest tutaj akceleracja z wykorzystaniem generycznego DPU (ang. Deep Processing Unit) możliwego do konfiguracji.
     
 \end{itemize}
 
@@ -135,7 +134,7 @@ Dostępnych jest wiele bibliotek usprawniających proces kwantyzacji, jak równi
 Możliwe jest wykorzystanie lub wzorowanie się na istniejących już rozwiązaniach zapewniających wysoką przepustowość oraz niskie zużycie energii. 
 
 
-% Należy zaznaczyć, iż architektury sieci przed i po procesie kwantyzacji nie mogą lub nie powinny być rozważanie jako identyczne ze względu na znaczne zmiany jakie wprowadza kwantyacja.  
+% Należy zaznaczyć, iż architektury sieci przed i po procesie kwantyzacji nie mogą lub nie powinny być rozważanie jako identyczne ze względu na znaczne zmiany jakie wprowadza kwantyzacja.  
 
 
 %---------------------------------------------------------------------------
