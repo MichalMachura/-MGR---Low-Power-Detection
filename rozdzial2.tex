@@ -10,9 +10,8 @@ a także dostępne narzędzia wspomagające docelową implementację.
 
 
 \section{Wymagania}
-Opracowywany system powstaje na potrzeby konkursu.
-Rozwiązanie powinno spełniać stawiane założenia oraz wymagania konkursowe dotyczące realizowanego zadania czy też implementacji.
-Głównym zadaniem konkursowym jest detekcja pojedynczych obiektów za pomocą sieci neuronowych na sekwencjach zarejestrowanych przez drona.
+Opracowywany system powstaje na potrzeby konkursu, zatem rozwiązanie powinno spełniać stawiane założenia oraz wymagania dotyczące realizowanego zadania i jego implementacji.
+Zadaniem jest detekcja pojedynczych obiektów za pomocą sieci neuronowych na sekwencjach zarejestrowanych przez drona.
 Organizatorzy dostarczają zbiór treningowy składający się z obrazów o wymiarach 640 pikseli szerokości na 360 pikseli wysokości. Zbiór składa się z ponad 90 tysięcy obrazów, wchodzących w skład 95 sekwencji podzielonych na 12 kategorii. Na rysunku \ref{fig:sample_images} przedstawiono przykładowe obrazy znajdujące się w zbiorze uczącym wraz z zaznaczonymi obiektami.
 \begin{figure}
     \centering
@@ -46,8 +45,7 @@ Sam współczynnik $IoU$ definiowany jest jako stosunek powierzchni (liczby piks
 IoU = \frac{|X_{ref} \cap X_{pred}|}{|X_{ref} \cup X_{pred}|}
 \label{eq:iou_eq}
 \end{equation}
-Ponadto mierzona jest również całkowita energia $E$ zużyta przez układ 
-wyznaczana z iloczynu czasu przetwarzania oraz średniej mocy układu (w czasie przetwarzania). 
+Ponadto mierzona jest również całkowita energia $E$ zużyta przez układ -- wyznaczana jako iloczynu czasu przetwarzania oraz średniej mocy układu (w czasie przetwarzania). 
 Chwilowe wartości mocy są odczytywane z regulatora mocy z częstotliwością próbkowania $20 Hz$.
 Zarówno pomiar energii oraz czasu musi być realizowany przez opracowaną aplikację.
 Wstępna analiza pozwala stwierdzić, iż uzyskanie wartości $IoU$ oraz $FPS$ poniżej wartości progowych skutkuje zastosowanie kary, natomiast
@@ -75,18 +73,18 @@ Logika programowalna zawiera:
 141 tys. przerzutników (ang. \emph{Flip-Flops}, \emph{FF}) 
 oraz 71 tys. \emph{LUT} (ang. Look-Up Table) zawartych w blokach \emph{CLB} (ang. \emph{Configurable Logic Block}), 360 \emph{DSP slice}, 1.8 MB pamięci \emph{distributed RAM}, a także 7.6 MB pamięci zawartej w 216 blokach \emph{BRAM}. 
 
-\emph{SLC} jest to miara określająca możliwości czy ilość zasobów umożliwiająca porównanie układów logiki programowalnej.
+\emph{SLC} jest to miara określająca możliwości czy liczbę zasobów umożliwiającą porównanie układów logiki programowalnej.
 Jeden \emph{SLC} stanowi 1 \emph{LUT} pozwalający na realizację 6-o elementowej funkcji logicznej, 2 przerzutniki oraz dodatkowe elementy logiczne t.j. multiplekser. 
 
 Bloki \emph{CLB} \cite{clb} dzielą się na dwa typy:
 \begin{description}
 \item \emph{SLICEL} -- jest zbudowany z 8 \emph{LUT}, 16 przerzutników, 8 bitowego łańcucha przeniesień (ang. \emph{carry chain}) oraz 7 multiplekserów. 
 Elementy \emph{LUT} możliwe są do konfiguracji pozwalającej na realizację dowolnej funkcji logicznej o 7-u, 8-u lub 9-u wejściach lub wybranych funkcji o do 55-u wejściach. 
-Uzyskane rezultaty mogą zostać zapamiętane w pamięci przerzutników.
-\item \emph{SLICEM} -- stanowi rozbudowany \emph{SLICEL} o dodatkowe elementy pamięci możliwe do konfiguracji w postaci 64 bitowej pamięci \emph{distributed RAM} lub 32 bitowego rejestru przesuwnego. 
+Uzyskane rezultaty mogą zostać zapamiętane w pamięci przerzutników (FF -- ang. \textit{Flip Flop}}.
+\item \emph{SLICEM} -- stanowi rozbudowany \emph{SLICEL} o dodatkowe elementy pamięci możliwe do konfiguracji w postaci 64 bitowej pamięci \emph{Distributed RAM} lub 32 bitowego rejestru przesuwnego. 
 \end{description}
 
-Elementy \emph{DSP} (ang. \emph{Digital Signal Processor}) \cite{dsp} stanowią elementy obliczeniowe pozwalające na realizację, operacji arytmetycznych czy logicznych.
+\emph{DSP} (ang. \emph{Digital Signal Processor}) \cite{dsp} stanowią elementy obliczeniowe pozwalające na realizację, operacji arytmetycznych czy logicznych.
 Charakteryzują się niewielkim zużyciem energii oraz dużą elastycznością.
 Możliwe są konfiguracje m.in. jako sumator, mnożarka czy nawet akumulator iloczynów sygnałów wejściowych.
 
@@ -94,7 +92,7 @@ Blok \emph{BRAM} (ang. \emph{Block RAM}) \cite{bram} stanowi 36Kbit pamięci o 2
 Możliwa jest konfiguracja jako 2 niezależne pamięci do 18Kbit, a także jako kolejka \emph{FIFO}.
 Dodatkowo dostępny jest tryb uśpienia pamięci pozwalając na dynamiczne zarządzanie mocą. 
 
-Rysunek \ref{fig:ultra96} przedstawia docelową platformę.
+Rysunek \ref{fig:ultra96} przedstawia platformę docelową.
 
 \begin{figure}
     \centering
@@ -104,14 +102,14 @@ Rysunek \ref{fig:ultra96} przedstawia docelową platformę.
 \end{figure}
 
 \section{Narzędzia}
+\label{ch:tools}
 Uzyskanie przepustowości $30 fps$, pozwalającej na osiągnięcie wysokiej oceny rozwiązania, może być trudne lub niemożliwe  przy użyciu jedynie części procesorowej nawet dla modeli o niskiej złożoności obliczeniowej. 
 Wymagana jest tutaj dodatkowa akceleracja wykorzystująca logikę programowalną. 
 W tym celu możliwe jest wykorzystanie istniejących narzędzi wspomagających sprzętową implementację sieci neuronowych, a także procesu ich uczenia. 
 
 Uczenie sieci z przeznaczeniem do sprzętowej akceleracji zazwyczaj wiąże się z wytrenowaniem modelu zmiennoprzecinkowego, następnie poddaniu go kwantyzacji oraz finalnie implementacji sprzętowej.
 Etap wytrenowania modelu zmiennoprzecinkowego może zostać przeprowadzony z użyciem narzędzi wspieranych na dalszych etapach lub konwersji modelu do wspieranego formatu. 
-Następnym etapem jest kwantyzacja wag oraz wyników pośrednich sieci. 
-Na tym następuje przybliżenie liczb zmiennoprzecinkowych liczbami stałoprzecinkowymi lub binarnymi. 
+Następnym etapem jest kwantyzacja wag oraz wyników pośrednich sieci, gdzie następuje przybliżenie liczb zmiennoprzecinkowych liczbami stałoprzecinkowymi lub binarnymi. 
 Zazwyczaj wyniki sieci kwantyzowanej różnią się od wyników modelu zmiennoprzecinkowego, przez co wymagane jest wznowienie procesu uczenia.
 Daje to możliwość pominięcia treningu modelu zmiennoprzecinkowego.
 Model kwantyzowany możliwy jest do sprzętowej implementacji z wykorzystaniem wybranych narzędzi.
@@ -146,9 +144,9 @@ Głównym celem jest implementacja szybkiego i energooszczędnego rozwiązania, 
 Zadanie jest realizowane w oparciu o sprzętową akcelerację wykorzystującą logikę programowalną płytki \emph{Avnet Ultra96 V2}.
 Dostępnych jest wiele narzędzi usprawniających proces kwantyzacji, jak również implementacji sprzętowej.
 W edycji 2021 konkursu zmieniono w stosunku do lat poprzednich funkcję oceny \eqref{eq:score}. Liniowa zależność zużycia energii została zastąpiona logarytmiczną \eqref{eq:e_score}. 
-Zmniejszono wagę związaną z przepustowością oraz dokładnością, a także zastosowano dodatkową "zewnętrzną" funkcję $ReLU$. 
+Zmniejszono wagę związaną z przepustowością oraz dokładnością, a także zastosowano dodatkową ``zewnętrzną'' funkcję $ReLU$. 
 Ponadto funkcja oceny jakości \eqref{eq:iou_score} dla $iou < 0.52$ przyjmuje wartość $0.1$. 
-W poprzednich edycjach dla $iou < 0.5$ funkcja "zerowała" ostateczna ocenę.   
+W poprzednich edycjach dla $iou < 0.5$ funkcja ``zerowała'' ostateczna ocenę.   
 Wymóg udostępnienia rozwiązania w formie otwarto-źródłowej pozwala na przegląd rozwiązań z edycji poprzedzających, a tym samym na ich dalszy rozwój.
 
 % Możliwe jest wykorzystanie lub wzorowanie się na istniejących już rozwiązaniach zapewniających wysoką przepustowość oraz niskie zużycie energii. 

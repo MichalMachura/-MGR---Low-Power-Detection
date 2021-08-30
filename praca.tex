@@ -5,6 +5,15 @@
 
 \usepackage{listings}
 
+% Abstrakt
+\newenvironment{abstractpage}
+{\cleardoublepage\vspace*{\fill}\thispagestyle{empty}}
+{\vfill\cleardoublepage}
+\renewenvironment{abstract}[1]
+{\bigskip\selectlanguage{#1}%
+    \begin{center}\bfseries\abstractname\end{center}}
+{\par\bigskip}
+
 
 \author{Michał Machura}
 \shortauthor{M. Machura}
@@ -48,6 +57,41 @@
 \begin{document}
 
 	\titlepages
+	
+	\begin{abstractpage}
+    \begin{abstract}{polish}
+        W ramach niniejszej pracy zaimplementowano aplikację do automatycznej rejestracji przebiegu gry w~brydża sportowego. Została ona wykonana w oparciu o system wizyjny, przetwarzający obraz nagrany przez układ dwóch kamer skierowanych na stół, przy którym rozgrywane jest rozdanie brydżowe. 
+        Pierwszym etapem realizacji zadania jest właściwa detekcja i klasyfikacja elementów wykorzystywanych podczas gry -- kart oraz zapowiedzi licytacyjnych. W tym celu wykorzystano dwie głębokie konwolucyjne sieci neuronowe YOLOv4. Podczas procesu uczenia, który został zrealizowany z wykorzystaniem automatycznie wygenerowanej bazy zdjęć, uzyskano detektor charakteryzujący się ponad 99.9\% skutecznością na zbiorze testowym. Druga część systemu odpowiedzialna jest za analizę uzyskanych informacji i w oparciu o zasady gry odtworzenie jej przebiegu.
+        Przygotowana aplikacja została przetestowana na zebranym podczas zawodów brydżowych materiale wideo i charakteryzuje się wysoką skutecznością. Drobne modyfikacje oraz akceleracja sprzętowa mogłyby umożliwić wykorzystanie systemu do przygotowania transmisji na żywo z zawodów brydżowych. 
+       
+        \bigskip
+        \textbf{Słowa kluczowe:}   głębokie konwolucyjne sieci neuronowe, system wizyjny, detekcja obiektów, brydż sportowy
+       
+       
+    \end{abstract}
+    \bigskip
+    \bigskip
+    \bigskip
+    \bigskip
+    \bigskip
+    \bigskip
+    \bigskip
+    \bigskip
+    \bigskip
+    \bigskip
+    \bigskip
+    \begin{abstract}{english}
+        In this work, the implementation of an application for automatic registration of a duplicate bridge game is presented. It is based on a vision system that processes images recorded by a system of two cameras directed at the table where the game takes place.
+        The first stage of the task is the detection of elements used during play -- cards and bidding calls. For this purpose, two YOLOv4 deep convolutional neural networks were used. During the training process, which was carried out using an automatically generated dataset, we obtained a detector characterised by more than 99.9\% accuracy on the test set. The second part of the system is responsible for analysing the obtained information and, based on the rules of the game, reconstructing its course.
+        The prepared application has been tested on video collected during bridge competitions and is characterised by its high accuracy. Minor modifications and hardware acceleration could make it possible to use the system for preparing live broadcasts of bridge competitions. 
+        
+        \bigskip
+       
+        \textbf{Keywords:} Deep Convolutional Neural Networks, vision system, object detection, dupliacte bridge
+    \end{abstract}
+\end{abstractpage}
+
+
 	\RedefinePlainStyle
 	
 	\setcounter{tocdepth}{2}

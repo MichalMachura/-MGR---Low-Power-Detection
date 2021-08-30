@@ -1,8 +1,8 @@
 \chapter{Badania wstępne}
 \label{cha:Badania wstępne}
 
-Analiza rozpatrywanego problemu detekcji pozwoliła na dokonanie przeglądu możliwych rozwiązań wykorzystujących m.in. sieci neuronowe.
-Przegląd pozwala zawęzić przestrzeń rozwiązań do wybranych typów warstw, architektur czy metod detekcji. Możliwe staje się wówczas zaproponowanie własnego rozwiązania.s
+Analiza rozpatrywanego problemu detekcji pozwoliła zawęzić przestrzeń rozważanych rozwiązań do wybranych typów warstw, architektur czy metod detekcji. 
+Ponadto, na tej podstawie możliwe jest zaproponowanie własnego rozwiązania.
 W niniejszym rozdziale zostaną przedstawione propozycje architektur sieci, proces ich uczenia, a także kwantyzacji. 
 
 \section{Architektura wstępna}
@@ -15,7 +15,7 @@ Analogiczna architektura wykorzystująca pełną konwolucję posiada ponad $2.6$
 Tak znaczna redukcja (również złożoności obliczeniowej) skłania do zastosowania konwolucji separowalnych w przypadku akceleracji sprzętowej. 
 % Jednakże liczba parametrów sieci \emph{SkyNet} dla wydajnej sprzętowej implementacji, wydaje się być wciąż nadmiarowa.
 % Uzyskanie wydanej implementacji sprzętowej jest możliwe m.in. poprzez redukcję liczby parametrów.
-Postanowiono sprawdzić czy możliwa jest dalsza redukcja liczby parametrów pozwalająca na uzyskanie satysfakcjonującego wyniku.  
+Postanowiono również sprawdzić czy możliwa jest dalsza redukcja liczby parametrów pozwalająca na uzyskanie satysfakcjonującego wyniku detekcji.  
 W tym celu rozważono architekturę sieci o 9 warstwach konwolucji separowalnej (z bias) z funkcją aktywacji $ReLU$ oraz  4 warstwami \emph{Max Pooling} umieszczonymi po wybranych konwolucjach separowalnych.
 Ostatnia warstwa stanowi warstwę bazującą na warstwach \emph{YOLOv1} oraz \emph{YOLOv2} (rozdział \ref{ch:yolo}). 
 Na rysunku \ref{fig:arch_v1} przedstawiono graficzną reprezentację architektury. 
@@ -28,11 +28,11 @@ Jako wejście sieci pozostawiono oryginalne wymiary obrazów dostępnych w zbior
     \label{fig:arch_v1}
 \end{figure}
 
-Ze względu, iż rozpatrywany problem to detekcja bez klasyfikacji, pominięto w funkcji błędu \eqref{eq:lossv1} część związaną z klasyfikacją. 
+Ze względu, iż rozpatrywany problem to detekcja bez klasyfikacji (przy czym wykrywane powinny być tylko obiekty należące do jednej z 12 klas), pominięto w funkcji błędu \eqref{eq:lossv1} część związaną z klasyfikacją. 
 Obliczenie błędów poszczególnych neuronów jest realizowane poprzez porównanie z maską referencyjną wyjść $y_{ref}$ (o wymiarach $(5,d_h,d_w)$) z odpowiadającymi wartościami dla kanałów. 
 Równania \eqref{eq:y_ref_valv1}-\eqref{eq:rowv1} prezentują sposób wyznaczenia wartości referencyjnych dla elementów poszczególnych kanałów oraz wyznaczenie położenia obiektu w siatce.
 
-Poprzez $x_c, y_c, w, h$ oznaczono stanowią parametry obiektu referencyjnego, $a_w$ oraz $a_h$  odpowiednio szerokość i wysokość \emph{anchor box}, $W = 640$ oraz $H = 360$ wymiary obrazu wejściowego, $d_w = 12$ oraz $d_h = 7$ wymiary siatki detekcji. 
+Poprzez $x_c, y_c, w, h$ oznaczono parametry obiektu referencyjnego, $a_w$ oraz $a_h$  odpowiednio szerokość i wysokość \emph{anchor box}, $W = 640$ oraz $H = 360$ wymiary obrazu wejściowego, $d_w = 12$ oraz $d_h = 7$ wymiary siatki detekcji. 
 Przyjęto  $a_w = 16$ oraz $a_h = 16$ jako wartość łączną wartości kroku sieci (ang. \emph{stride}) wynikającą z liczby warstw \emph{Max Pooling}.
 
 \begin{equation}
@@ -121,7 +121,7 @@ Dla pozostałych architektur również przeprowadzano augmentację danych i uży
 
 Proces uczenia przerwano, gdy nie zauważono zmian wartości błędu oraz metryki \emph{IoU} dla zbioru uczącego oraz walidacyjnego.
 Finalnie architektura osiągnęła wartość współczynnika $IoU = 0.47$ dla zbioru walidacyjnnego.
-Uzyskany wynik jest niesatysfakcjonujący, co skutkuje odrzuceniem rozpatrywanej wersji architektury w dalszych rozważaniach.
+Uzyskany wynik był niesatysfakcjonujący, co skutkowało odrzuceniem rozpatrywanej wersji architektury w dalszych rozważaniach.
 
 \section{Architektura rozgałęziona}
 
@@ -131,7 +131,7 @@ Na rysunku \ref{fig:arch_v2} przedstawiono graficzną reprezentację architektur
 Po przeprowadzeniu procesu ucznia sieci, z wykorzystaniem techniki transferu wiedzy z architektury pierwotnej, uzyskano pogorszenie wartości $IoU$.
 Z tego powodu odrzucono analizę również tej architektury.
 Przyczyną niepowodzenia może być zbyt mała liczba parametrów dla rozpatrywanego problemu.
-Ponadto w stosowanych funkcjach błędu dla części regresyjnej wymaga się zerowych rezultatów.
+Ponadto w stosowanych funkcjach błędu dla części regresyjnej wymaga się zerowych rezultatów elementów siatki, do których nie przypisano obiektu (położenie różne od $(row,col)$).
 Zwiększa to stabilność działania sieci, jednakże wymaga również większej liczby pozytywnych detekcji z parametrami różnymi od wymiaru \emph{anchor box} oraz położenia środka elementu siatki, co dla rozpatrywanego problemu detekcji pojedynczego obiektu nie jest możliwe. 
 
 \begin{figure}
@@ -270,7 +270,7 @@ l_r(t+1) = max(10^{-5}, min(1, l_r(t+1)))
 Po zakończeniu procesu uczenia modelu zmiennoprzecinkowego osiągnięto wartość $IoU = 0.8$ dla zbioru walidacyjnego oraz $0.7$ dla zbioru uczącego. 
 Powodem tak znacznej różnicy wartości metryki jest znaczny stopień augmentacji danych.
 
-Sieć poddano kwantyzacji. 
+Następnie sieć poddano kwantyzacji. 
 Dane wejściowe zostały poddane kwantyzacji 8 bitowej bez znaku i bez części całkowitej.
 Warstwy pośrednie poddano kwantyzacji 8 bitowej ze znakiem i 2 bitami części całkowitej.
 Ostatnią warstwę poddano kwantyzacji 8 bitowej ze znakiem i 3 bitami części całkowitej.
