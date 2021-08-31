@@ -145,8 +145,8 @@ Zwiększa to stabilność działania sieci, jednakże wymaga również większej
 \section{Architektura Resnet18}
 
 Rezultaty dotychczas badanych architektur były niesatysfakcjonujące.
-Zdecydowano się zatem na zastosowanie rozwiązania o znacznie większej liczbie parametrów,  a także wykorzystującego połączenia rezydualne - \emph{Resnet18}\cite{resnet18}, tym samym sprawdzając czy bardziej rozbudowany model uzyska żądane rezultaty. 
-W tym celu wykorzystano dwa pierwsze bloki rezydualne wraz z dodatkową warstwę konwolucyjną posiadającą 128 filtrów oraz warstwą \emph{YOLOv3}. 
+Zdecydowano się zatem na zastosowanie rozwiązania o znacznie większej liczbie parametrów, a także wykorzystującego połączenia rezydualne - \emph{Resnet18}\cite{resnet18}, tym samym sprawdzając czy bardziej rozbudowany model uzyska żądane rezultaty. 
+W tym celu wykorzystano dwa pierwsze bloki rezydualne sieci \emph{ResNet18} wraz z dodatkową warstwę konwolucyjną posiadającą 128 filtrów oraz warstwą \emph{YOLOv3}. 
 Celem przyspieszenia procesu uczenia wagi bloków rezydualnych zostały zainicjalizowane wagami z sieci trenowanej na zbiorze \emph{ImageNet}\cite{imagenet} (dostęp za pośrednictwem biblioteki \emph{PyTorch}).
 Wykorzystano tu trzy \emph{anchor box} o wymiarach (szerokość x wysokość): $22x33, 43x69, 89x133$ uzyskanych jako wynik algorytmu k-średnich. 
 Uzyskana architektura podsiadała ponad 700 tys. parametrów.
@@ -168,8 +168,8 @@ Parametry obiektu referencyjnego oznaczono poprzez $B_{ref}$.
 
 Dla modelu zmiennoprzecinkowego architektura osiągnęła wartość $IoU$ ponad $0.8$ dla zbioru walidacyjnego. Proces uczenia został przerwany podobnie jak poprzednio, gdy nie zauważano znaczących zmian błędu i metryki \emph{IoU}.
 
-Zdecydowano się na kwantyzację modelu z wykorzystaniem zapisu stałoprzecinkowego. 
-Obraz wejściowy został poddany kwantyzacji 8 bitowej bez znaku i bez części całkowitej. 
+Zdecydowano się na kwantyzację modelu z wykorzystaniem zapisu stałoprzecinkowego z wartościami dobranymi eksperymentalnie. 
+Obraz wejściowy (znormalizowany do przedziału $[0.0;1.0]$) został poddany kwantyzacji 8 bitowej bez znaku i bez części całkowitej. 
 Wagi oraz wyjścia warstw pośrednich poddano kwantyzacji 8 bitowej ze znakiem i 2 bitami części całkowitej.
 Ostanie dwie warstwy poddano kwantyzacji 8 bitowej ze znakiem i 3 bitami części całkowitej.
 W przypadku każdej kwantyzacji zastosowano również ograniczenie wartości wynikowej do limitów wynikających z zapisu w formacie stałoprzecinkowym. 
@@ -185,6 +185,7 @@ Jednakże analizując przeprowadzone procesy uczenia można zauważyć, iż doda
 
 
 \section{LittleNet}
+\label{ch:LN}
 
 Podsumowując wnioski z rozważanych dotychczas architektur można stwierdzić, iż:
 \begin{itemize}
@@ -213,7 +214,7 @@ Ostatnią warstwę stanowi konwolucja \emph{PW} stanowiąca warstwę \emph{YOLOv
 Wymiary \emph{anchor box} pozostały takie same jak dla architektury wykorzystującej bloki rezydualne, lecz przeskalowane do wymiarów wejścia sieci. 
 Proponowana architektura posiada niespełna 134 tys. parametrów, co stanowi znaczą redukcję liczby parametrów w stosunku do \emph{SkyNet} (powyżej 300 tys.) oraz \emph{Ultra\_net} (ponad 200 tys.). 
 Architekturze nadano % roboczą
-nazwę \emph{LittleNet}.
+nazwę \emph{LittleNet} (\emph{LN}).
 \begin{figure}
     \centering
     \includegraphics[width=4cm]{images/LNv1}

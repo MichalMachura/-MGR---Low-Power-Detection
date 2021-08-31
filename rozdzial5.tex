@@ -31,12 +31,11 @@ Wykorzystywana jest tutaj komunikacja z wykorzystaniem protokołu \emph{AXI4-Str
 Wymiana danych odbywa się za pośrednictwem  modułów \emph{AXIS RECEIVER} do odbioru oraz \emph{AXIS SENDER} do wysyłania danych zgromadzonych w rejestrze \emph{SPR} (ang. \emph{Serial-Parallel Register}).
 Poszczególne akceleratory pogrupowane są w bloki po 3 akceleratory. 
 Na jeden blok przypisane są dwa bloki pamięci RAM, w tym jeden z dostępem  multipleksowanym.
-Ostatnia warstwa wyznacza parametry obiektu zajmujące 7 bajtów.
+Ostatnia warstwa wyznacza parametry obiektu zajmujące 7 bajtów pamięci.
 Z tego względu dane te są umieszczone w rejestrze \emph{SPR} (zamiast w pamięci RAM).
 Proces akceleracji odbywa się według schematu prezentowanego w tabeli \ref{tab:LNACC}
-W jednej chwili są aktywne akceleratory co czwartej warstwy.
+W jednej chwili są aktywne akceleratory co czwartej warstwy (grupy warstw).
 Jest to wymagane, aby udzielić dostępu do wybranych bloków pamięci kilku akceleratorom.
-
 \begin{figure}
     \centering
     \includegraphics[height=0.9\textheight]{images/LNACC.png}
@@ -49,14 +48,12 @@ Jest to wymagane, aby udzielić dostępu do wybranych bloków pamięci kilku akc
     \label{tab:LNACC}
     \includegraphics[width=0.9\textwidth]{images/acc_activ.png}
 \end{table}
-
-Wyróżniono 3 typy akceleratorów:
+Wyróżniono 3 typy akceleratorów (dostępnych w kilku konfiguracjach):
 \begin{description}
 \item warstwa wejściowa,
 \item warstwa \emph{depthwise},
 \item warstwa \emph{pointwise}.
 \end{description}
-Dostępnych w kilku konfiguracjach.
 
 Ponadto zapis do pamięci wyjściowej w każdej warstwie jest zrealizowany przez moduł \emph{MWU} (ang. \emph{Memory Writer Unit}) przedstawiony na rysunku \ref{fig:mwu}.
 Wykonuje on operacje analogiczne do rejestru równoległo-szeregowego.
@@ -137,7 +134,7 @@ W następnym kroku wykonywana jest operacja normalizacji wraz z ponownym ogranic
 Następnym etapem przetwarzania jest (ewentualna) operacja \emph{Max Pooling}.
 Do tego celu wykorzystuje się odpowiednie opóźnienia oraz porównywania wartości.
 Uzyskany rezultat jest zapisywany pod adresem wyznaczanym przez moduł \emph{MWU}.
-Opcjonalną funkcjonalnością (dla warstwy \emph{YOLOv3}) jest zastąpienie \emph{MWU} przez \emph{MFU} (ang. \emph{Max Finder Unit}) pozwalającego znaleźć punkt o największej wartości wykrywalności obiektu, a także zwrócić jego parametry.
+Opcjonalną funkcjonalnością (dla warstwy \emph{YOLOv3}) jest zastąpienie \emph{MWU} przez \emph{MFU} (ang. \emph{Max Finder Unit}) pozwalającego znaleźć punkt o największej wartości (funkcja \emph{argmax}) wykrywalności obiektu, a także zwrócić jego parametry (funkcja \emph{max}).
 Ponadto istnieje możliwość zrównoleglenia obliczeń poprzez wykorzystanie $P$ modułów \emph{PW\_PU}. 
 
 Sterowanie poszczególnymi modułami jest realizowane przez logikę reprezentowana przez \emph{PW\_CU} (ang. \emph{PointWise Control Unit}).
@@ -151,10 +148,53 @@ Sterowanie poszczególnymi modułami jest realizowane przez logikę reprezentowa
 \end{figure}
 \begin{figure}
     \centering
-    \includegraphics[width=0.9\linewidth]{images/PW_PU.png}
+    \includegraphics[width=0.8\linewidth]{images/PW_PU.png}
     \caption{Schemat \emph{PW\_PU} - akumulacja z mnożeniem realizowane przez \emph{DSP}. Bloki \emph{DSP2} oraz \emph{DSP3+L2} są opcjonalne zależne od konfiguracji.}
     \label{fig:pwpu}
 \end{figure}
+
+\subsection{Sterowanie akceleracją}
+\label{ch:sterowanie}
+Zaimplementowany akcelerator sieci \emph{LittleNet} został dołączony do schematu blokowego dostarczonego przez organizatorów konkursu.
+Zmodyfikowany schemat przedstawiono na rysunku \ref{fig:vivado}. 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/vivado.png}
+    \caption{Schemat blokowy w środowisku \emph{Vivado 2019.1}. Zaznaczono dodane elementy - akcelerator oraz negacja sygnału \emph{reset}.}
+    \label{fig:vivado}
+\end{figure}
+
+Uzyskaną modyfikacją poddano syntezie, implementacji oraz generacji \emph{bit stream} w środowisku \emph{Vivado 2019.1} dostarczonym przez firmę \emph{Xilinx}.
+
+Otrzymane rezultaty (pliki \emph{*.hwh} oraz \emph{*.bit}) umieszczono w odpowiedno skonfigurowanym środowisku na platformie \emph{Avnet Ultra96 V2}.
+Aplikacje sterującą zrealizowano w postaci notatnika \emph{Jupyter}.
+Konfiguracja logiki programowalnej oraz przesył danych do oraz z akceleratora zostały zrealizowane z użyciem biblioteki \emph{PYNQ}. 
+Odczyt obrazów oraz przetwarzanie rezultatów zaimplementowano w sposób równoległy do procesu akceleracji.
+Analizując dokładniej schemat akceleracji można zauważyć, iż rezultat przetwarzania danego obrazu jest uzyskiwany po 4 cyklach przetwarzania.
+Wymaga to odrzucenia początkowych rezultatów oraz wykonania dodatkowych cykli akceleracji, aby uzyskać poprawny wynik dla wszystkich obrazów wejściowych.
+
+
+
+Przeprowadzony proces implementacji wymagał na początkowym etapie wyznaczenia modelu programowego. 
+W tego celu wykorzystano się biblioteką \emph{PyTorch} oraz \emph{Brevitas}.
+Pierwszy etap wymagał wytrenowania modelu zmiennoprzecinkowego.
+Uzyskany model zastał następnie poddany odpowiedniej kwantyzacji.
+Zrealizowanie sprzętowej akceleracji wymagało wpierw opracowania sposobu implementacji poszczególnych warstw, jak i całej sieci.
+Wyszczególniono 3 typy akceleratorów: warstwa wejściowa,  \emph{DW} oraz \emph{PW}.
+Pierwsza z wymienionych dokonuje zmiany formatu danych wejściowych.
+Pozostałe dwie warstwy realizuję odpowiednie konwolucje wraz z normalizacją.
+Warstwa \emph{PW} możliwa jest do konfiguracji realizującej operacje \emph{Max Pooling} czy też funkcji \emph{argmax} oraz \emph{max}. 
+Możliwe jest także dodatkowe zrównolelglenie poprzez wykorzystanie większej liczby modułów \emph{PW\_PU}. 
+Akceleracja całej sieci oparta jest o architekturę potokową gruboziarnistą z opóźnieniem 4 cykli przetwarzania.
+Zastosowanie akceleratora do przetwarzania obrazów wymagało implementacji z wykorzystaniem notatnika \emph{Jupyter} możliwego do modyfikacji w trakcie ewaluacji. 
+
+
+
+
+
+
+
+
 
 
 
