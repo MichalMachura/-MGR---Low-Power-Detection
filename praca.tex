@@ -51,8 +51,9 @@
 \faculty{Wydział Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej}
 %\faculty{Faculty of Electrical Engineering, Automatics, Computer Science and Biomedical Engineering}
 
-% \acknowledgements{Serdecznie dziękuję }
 
+
+% \acknowledgements{Serdecznie dziękuję.}
 
 \begin{document}
 
@@ -60,12 +61,17 @@
 	
 	\begin{abstractpage}
     \begin{abstract}{polish}
-        W ramach niniejszej pracy zaimplementowano aplikację do automatycznej rejestracji przebiegu gry w~brydża sportowego. Została ona wykonana w oparciu o system wizyjny, przetwarzający obraz nagrany przez układ dwóch kamer skierowanych na stół, przy którym rozgrywane jest rozdanie brydżowe. 
-        Pierwszym etapem realizacji zadania jest właściwa detekcja i klasyfikacja elementów wykorzystywanych podczas gry -- kart oraz zapowiedzi licytacyjnych. W tym celu wykorzystano dwie głębokie konwolucyjne sieci neuronowe YOLOv4. Podczas procesu uczenia, który został zrealizowany z wykorzystaniem automatycznie wygenerowanej bazy zdjęć, uzyskano detektor charakteryzujący się ponad 99.9\% skutecznością na zbiorze testowym. Druga część systemu odpowiedzialna jest za analizę uzyskanych informacji i w oparciu o zasady gry odtworzenie jej przebiegu.
-        Przygotowana aplikacja została przetestowana na zebranym podczas zawodów brydżowych materiale wideo i charakteryzuje się wysoką skutecznością. Drobne modyfikacje oraz akceleracja sprzętowa mogłyby umożliwić wykorzystanie systemu do przygotowania transmisji na żywo z zawodów brydżowych. 
-       
+        W pracy przedstawiono pełen proces projektowania systemu detekcji opartego o głębokie sieci neuronowe z przeznaczeniem sprzętowej implementacji.
+        Opracowany system jest realizowany na potrzeby konkursu \emph{2021 DAC SDC}.
+        Zadaniem jest zaprojektowanie rozwiązania o dużej dokładności, wysokiej przepustowości oraz o niewielkim zużyciu energi. 
+        Zostały przedstawione wymagania oraz założenia konkursu, a także  docelowa platforma -- \emph{Avnet Ultra96 V2}. 
+        Dokonano przeglądu dostępnych rozwiązań klasycznych oraz opartych o sieci neuronowe, w szczególności rozwiązań energooszczędnych. 
+        Przedstawiono proces projektowania architektury sieci, wraz z treningiem oraz kwantyzacją. 
+        Opisano projektowania i implementacji akceleratora sprzętowego, a także próby optymalizacji. 
+        
+        
         \bigskip
-        \textbf{Słowa kluczowe:}   głębokie konwolucyjne sieci neuronowe, system wizyjny, detekcja obiektów, brydż sportowy
+        \textbf{Słowa kluczowe:}   głębokie konwolucyjne sieci neuronowe, system wizyjny, detekcja obiektów, kwantyzowane sieci neuronowe, akcelerator sprzętowy
        
        
     \end{abstract}
@@ -81,13 +87,16 @@
     \bigskip
     \bigskip
     \begin{abstract}{english}
-        In this work, the implementation of an application for automatic registration of a duplicate bridge game is presented. It is based on a vision system that processes images recorded by a system of two cameras directed at the table where the game takes place.
-        The first stage of the task is the detection of elements used during play -- cards and bidding calls. For this purpose, two YOLOv4 deep convolutional neural networks were used. During the training process, which was carried out using an automatically generated dataset, we obtained a detector characterised by more than 99.9\% accuracy on the test set. The second part of the system is responsible for analysing the obtained information and, based on the rules of the game, reconstructing its course.
-        The prepared application has been tested on video collected during bridge competitions and is characterised by its high accuracy. Minor modifications and hardware acceleration could make it possible to use the system for preparing live broadcasts of bridge competitions. 
-        
+        In this work, the full process of designing a detecton system based on deep neural networks for hardware implementation.
+        The developed system is implemented for the \emph{2021 DAC SDC} competition.
+        The task is to design a solution with high accuracy, high throughput and low energy consumption.
+        The requirements and assumptions of the competition were presented, as well as the target platform \emph{Avnet Ultra96 V2}.
+        The available classic and neural network-based solutions, in particular energy-saving solutions, have been reviewed.
+        The process of designing network architecture were shown with training and quantiaztion.
+        Design and implementation of a hardware accelerator as well as optimization attempts are described. 
         \bigskip
        
-        \textbf{Keywords:} Deep Convolutional Neural Networks, vision system, object detection, dupliacte bridge
+        \textbf{Keywords:} Deep Convolutional Neural Networks, vision system, object detection, Quantized Neural Networks, hardware accelerator
     \end{abstract}
 \end{abstractpage}
 

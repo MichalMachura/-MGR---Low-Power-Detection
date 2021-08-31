@@ -4,8 +4,7 @@
 Opracowywany system powstaje na potrzeby konkursu \emph{Design Automation Conference System Design Contest 2021} (DAC SDC)
 Rozpatrywanym problemem jest detekcja obiektów za pomocą sztucznej sieci neuronowej.
 Realizacja zadania ma zostać przeprowadzona na wbudowanej platformie obliczeniowej typu \emph{SBC} (ang. \emph{Single Board Computer}) wyposażonej w logikę rekonfigurowalną.
-W niniejszym rozdziale zostaną przedstawione założenia oraz wymagania stawiane wobec opracowywanego systemu detekcji.
-Zostanie opisana docelowa platforma obliczeniowa, przedstawione wybrane możliwe rozwiązania, 
+W niniejszym rozdziale zostaną przedstawione założenia oraz wymagania stawiane wobec opracowywanego systemu detekcji, opisana docelowa platforma obliczeniowa, 
 a także dostępne narzędzia wspomagające docelową implementację.
 
 
@@ -79,8 +78,8 @@ Jeden \emph{SLC} stanowi 1 \emph{LUT} pozwalający na realizację 6-o elementowe
 Bloki \emph{CLB} \cite{clb} dzielą się na dwa typy:
 \begin{description}
 \item \emph{SLICEL} -- jest zbudowany z 8 \emph{LUT}, 16 przerzutników, 8 bitowego łańcucha przeniesień (ang. \emph{carry chain}) oraz 7 multiplekserów. 
-Elementy \emph{LUT} możliwe są do konfiguracji pozwalającej na realizację dowolnej funkcji logicznej o 7-u, 8-u lub 9-u wejściach lub wybranych funkcji o do 55-u wejściach. 
-Uzyskane rezultaty mogą zostać zapamiętane w pamięci przerzutników (FF -- ang. \textit{Flip Flop}}.
+Elementy \emph{LUT} możliwe są do konfiguracji pozwalającej na realizację dowolnej funkcji logicznej o 7-u, 8-u lub 9-u wejściach lub wybranych funkcji o 55-u wejściach. 
+Uzyskane rezultaty mogą zostać zapamiętane w pamięci przerzutników (FF -- ang. \textit{Flip Flop}).
 \item \emph{SLICEM} -- stanowi rozbudowany \emph{SLICEL} o dodatkowe elementy pamięci możliwe do konfiguracji w postaci 64 bitowej pamięci \emph{Distributed RAM} lub 32 bitowego rejestru przesuwnego. 
 \end{description}
 
@@ -108,10 +107,12 @@ Wymagana jest tutaj dodatkowa akceleracja wykorzystująca logikę programowalną
 W tym celu możliwe jest wykorzystanie istniejących narzędzi wspomagających sprzętową implementację sieci neuronowych, a także procesu ich uczenia. 
 
 Uczenie sieci z przeznaczeniem do sprzętowej akceleracji zazwyczaj wiąże się z wytrenowaniem modelu zmiennoprzecinkowego, następnie poddaniu go kwantyzacji oraz finalnie implementacji sprzętowej.
-Etap wytrenowania modelu zmiennoprzecinkowego może zostać przeprowadzony z użyciem narzędzi wspieranych na dalszych etapach lub konwersji modelu do wspieranego formatu. 
+Etap wytrenowania modelu zmiennoprzecinkowego może zostać przeprowadzony z użyciem
+dowolnych narzędzi.
+Korzystając z formatu nie wspieranego wymagana może być zmiana reprezentacji.
 Następnym etapem jest kwantyzacja wag oraz wyników pośrednich sieci, gdzie następuje przybliżenie liczb zmiennoprzecinkowych liczbami stałoprzecinkowymi lub binarnymi. 
 Zazwyczaj wyniki sieci kwantyzowanej różnią się od wyników modelu zmiennoprzecinkowego, przez co wymagane jest wznowienie procesu uczenia.
-Daje to możliwość pominięcia treningu modelu zmiennoprzecinkowego.
+Istnieje też możliwość pominięcia początkowego treningu modelu zmiennoprzecinkowego.
 Model kwantyzowany możliwy jest do sprzętowej implementacji z wykorzystaniem wybranych narzędzi.
 
 Poniżej wymieniono wybrane narzędzia wspomagające sprzętową implementację sieci neuronowych

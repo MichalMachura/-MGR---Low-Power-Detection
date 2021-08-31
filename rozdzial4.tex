@@ -115,13 +115,15 @@ Rozdzielenie danych odbywało się losowo wewnątrz każdej sekwencji.
 Uzyskane zbiory były stosowane dla wszystkich dalszych wariantów architektur i funkcji błędu.
 
 Rozpoczynając trening sieci ustalono wszystkie parametry funkcji błędu \eqref{eq:lossv1} na wartość $1$.
-Dla zbioru uczącego przeprowadzano augmentację danych z wykorzystaniem filtracji uśredniającej, zakłóceń addytywnych, przeskalowania czy też rotacji.
+Dla zbioru uczącego przeprowadzano augmentację danych z wykorzystaniem filtracji uśredniającej (konwolucja z maską o wymiarze $SxS$ o wartościach $\frac{1}{S*S}$), zakłóceń addytywnych ( dodanie białego szumu z zakresu $[-\sigma;\sigma]$ z ograniczeniem wartości do przedziału $[0.0;1.0]$), przeskalowania (powiększenie lub pomniejszenie obrazu) czy też rotacji (obrót obrazu o kąt z zakresu $[-45\deg;45\deg]$).
 Do minimalizacji błędu użyto algorytmu \emph{Adadelta}.
 Dla pozostałych architektur również przeprowadzano augmentację danych i używano tego samego algorytmu optymalizacji.
 
 Proces uczenia przerwano, gdy nie zauważono zmian wartości błędu oraz metryki \emph{IoU} dla zbioru uczącego oraz walidacyjnego.
 Finalnie architektura osiągnęła wartość współczynnika $IoU = 0.47$ dla zbioru walidacyjnnego.
-Uzyskany wynik był niesatysfakcjonujący, co skutkowało odrzuceniem rozpatrywanej wersji architektury w dalszych rozważaniach.
+Uzyskany wynik był niesatysfakcjonujący, zdecydowano się na odrzucenie rozpatrywanej wersji architektury w dalszych rozważaniach.
+W trakcie wizualizacji zauważono, iż sieć poprawnie wskazuje element siatki, lecz gorzej radzi sobie regresją parametrów.
+Przyczyną mogła być zbyt rzadka siatka detekcji.
 
 \section{Architektura rozgałęziona}
 
@@ -131,7 +133,7 @@ Na rysunku \ref{fig:arch_v2} przedstawiono graficzną reprezentację architektur
 Po przeprowadzeniu procesu ucznia sieci, z wykorzystaniem techniki transferu wiedzy z architektury pierwotnej, uzyskano pogorszenie wartości $IoU$.
 Z tego powodu odrzucono analizę również tej architektury.
 Przyczyną niepowodzenia może być zbyt mała liczba parametrów dla rozpatrywanego problemu.
-Ponadto w stosowanych funkcjach błędu dla części regresyjnej wymaga się zerowych rezultatów elementów siatki, do których nie przypisano obiektu (położenie różne od $(row,col)$).
+Ponadto w stosowanych funkcjach błędu dla części regresyjnej wymagano zerowych rezultatów (wartość referencyjną stanowiło 0 ) elementów siatki, do których nie przypisano obiektu (położenie różne od $(row,col)$).
 Zwiększa to stabilność działania sieci, jednakże wymaga również większej liczby pozytywnych detekcji z parametrami różnymi od wymiaru \emph{anchor box} oraz położenia środka elementu siatki, co dla rozpatrywanego problemu detekcji pojedynczego obiektu nie jest możliwe. 
 
 \begin{figure}
@@ -144,8 +146,15 @@ Zwiększa to stabilność działania sieci, jednakże wymaga również większej
 
 \section{Architektura Resnet18}
 
+\begin{figure}
+    \centering
+    \includegraphics{images/residual.png}
+    \caption{Blok rezydualny. Przekształcenie identycznościowe omijające wybrane bloki konwolucji. Źródlo: \cite{resnet18}}
+    \label{fig:res_block}
+\end{figure}
+
 Rezultaty dotychczas badanych architektur były niesatysfakcjonujące.
-Zdecydowano się zatem na zastosowanie rozwiązania o znacznie większej liczbie parametrów, a także wykorzystującego połączenia rezydualne - \emph{Resnet18}\cite{resnet18}, tym samym sprawdzając czy bardziej rozbudowany model uzyska żądane rezultaty. 
+Zdecydowano się zatem na zastosowanie rozwiązania o znacznie większej liczbie parametrów, a także wykorzystującego połączenia rezydualne (połączenia omijające wybrane następne warstwy przedstawione na rysunku \ref{fig:res_block} )- \emph{Resnet18}\cite{resnet18}, tym samym sprawdzając czy bardziej rozbudowany model uzyska żądane rezultaty. 
 W tym celu wykorzystano dwa pierwsze bloki rezydualne sieci \emph{ResNet18} wraz z dodatkową warstwę konwolucyjną posiadającą 128 filtrów oraz warstwą \emph{YOLOv3}. 
 Celem przyspieszenia procesu uczenia wagi bloków rezydualnych zostały zainicjalizowane wagami z sieci trenowanej na zbiorze \emph{ImageNet}\cite{imagenet} (dostęp za pośrednictwem biblioteki \emph{PyTorch}).
 Wykorzystano tu trzy \emph{anchor box} o wymiarach (szerokość x wysokość): $22x33, 43x69, 89x133$ uzyskanych jako wynik algorytmu k-średnich. 
@@ -153,10 +162,10 @@ Uzyskana architektura podsiadała ponad 700 tys. parametrów.
 Wymiary obrazów wejściowych zredukowano do 360 pikseli szerokości oraz 180 pikseli wysokości.
 Funkcja błędu odpowiedzi sieci przyjmuje postać daną równaniem \eqref{eq:loss_yolo_resnet}.
 Jako funkcję błędu regresji wybrano funkcję \emph{GIoU} \eqref{eq:giou}.
-Błąd wykrycia obiektu jest realizowany przez entropię binarną.
+Błąd wykrycia obiektu jest realizowany przez funkcję entropii binarnej.
 Dla obu współczynników wagowych przyjęto wartość $1$.
 \begin{equation}
-loss(v_{pred},v_{ref},A_{pred}, B_{ref}) = \lambda_{validity} BCE(v_{pred}, v_{ref} + \lambda_{bbox} \sum_{a = 0}^{2} GIoU(A_{pred}(a), B_{ref})
+loss(v_{pred},v_{ref},A_{pred}, B_{ref}) = \lambda_{validity} BCE(v_{pred}, v_{ref}) + \lambda_{bbox} \sum_{a = 0}^{2} GIoU(A_{pred}(a), B_{ref})
 \label{eq:loss_yolo_resnet}
 \end{equation}
 Poprzez $v_{pred}$ oznaczono 3 kanały wykrycia obiektu dla każdego \emph{anchor box}, 
@@ -164,6 +173,7 @@ $v_{ref}$ stanowi maskę referencyjną.
 Wartość $1$ znajduje się na pozycji $(row,col)$ (wyznaczane z równań \eqref{eq:rowv1}-\eqref{eq:colv1}) dla każdego \emph{anchor box}.
 Predykcja parametrów obiektu dla elementu siatki $(row,col)$ dla $a$-tego \emph{bounding box} została oznaczona $A_{pred}(a)$ oraz wyznaczona za pomocą równań \eqref{eq:xc_yolov2}-\eqref{eq:h_yolov2}.
 Parametry obiektu referencyjnego oznaczono poprzez $B_{ref}$. 
+Wyznaczany błąd jest obliczany względem grupy filtrów każdego z \emph{anchor box} na tej samej pozycji w siatce.
 
 
 Dla modelu zmiennoprzecinkowego architektura osiągnęła wartość $IoU$ ponad $0.8$ dla zbioru walidacyjnego. Proces uczenia został przerwany podobnie jak poprzednio, gdy nie zauważano znaczących zmian błędu i metryki \emph{IoU}.
@@ -171,7 +181,7 @@ Dla modelu zmiennoprzecinkowego architektura osiągnęła wartość $IoU$ ponad 
 Zdecydowano się na kwantyzację modelu z wykorzystaniem zapisu stałoprzecinkowego z wartościami dobranymi eksperymentalnie. 
 Obraz wejściowy (znormalizowany do przedziału $[0.0;1.0]$) został poddany kwantyzacji 8 bitowej bez znaku i bez części całkowitej. 
 Wagi oraz wyjścia warstw pośrednich poddano kwantyzacji 8 bitowej ze znakiem i 2 bitami części całkowitej.
-Ostanie dwie warstwy poddano kwantyzacji 8 bitowej ze znakiem i 3 bitami części całkowitej.
+Ostanie dwie warstwy poddano kwantyzacji 8 bitowej ze znakiem i 3 bitami części całkowitej (możliwość uzyskania skali przekształcającej \emph{anchor box} do wymiarów obrazu).
 W przypadku każdej kwantyzacji zastosowano również ograniczenie wartości wynikowej do limitów wynikających z zapisu w formacie stałoprzecinkowym. 
 Tak dobrane parametry kwantyzacji mają również pełnić zadanie pewnego rodzaju regularyzacji.
 
@@ -223,7 +233,7 @@ nazwę \emph{LittleNet} (\emph{LN}).
 \end{figure}
 
 Rozmiar wejścia sieci ustalono na 360 pikseli szerokości oraz 180 pikseli wysokości.
-Funkcja błędu odpowiedzi sieci \eqref{eq:loss_yolo_resnet} rozszerzono o regularyzację normą $L_1$ parametrów sieci $p$ oraz uogólnienie błędu regresji funkcją $IoU_{based}$, uzyskując równanie \eqref{eq:loss_LN}.
+Funkcja błędu odpowiedzi sieci \eqref{eq:loss_yolo_resnet} rozszerzono o regularyzację normą $L_1$ (średnia wartość bezwzględna) parametrów sieci $p$ oraz uogólnienie błędu regresji funkcją $IoU_{based}$, uzyskując równanie \eqref{eq:loss_LN}.
 \begin{equation}
 \begin{aligned}
 loss(v_{pred},v_{ref},A_{pred}, B_{ref}, p) 
@@ -237,7 +247,7 @@ Za funkcję błędu regresji $IoU_{based}$ przyjęto funkcję \emph{GCIoU}(ang. 
 Funkcja ta bazuje na \emph{GIoU}\cite{giou}, \emph{DIoU}\cite{dciou} oraz \emph{CIoU}\cite{dciou}. 
 Połączenie powyższych funkcji pozwala na połączenie ich zalet funkcji wraz z eliminacją wad: 
 \begin{itemize}
-    \item $giou_{part}$ - bardziej bezpośredni wpływ błędu na parametry oraz poprawne skalowanie (gdy \emph{IoU}$ = 0$) \eqref{eq:giou_part},
+    \item $giou_{part}$ - bardziej bezpośredni wpływ na parametry oraz poprawne skalowanie (gdy \emph{IoU}$ = 0$) \eqref{eq:giou_part},
     \item $diou_{part}$ - centralizacji predykcji \eqref{eq:diou_part},
     \item $ciou_{part}$ - wzmocnione finalne skalowanie rozmiaru \eqref{eq:ciou_part}. 
 \end{itemize}

@@ -1,5 +1,27 @@
 \chapter{Podsumowanie}
 \label{cha:Podsumowanie}
 
-Porównanie rezultatów(narzędzia, kwantyzacje itp.).
-Jeżeli to będzie po ogłoszeniu wyników to wyniki konkursu.
+% Porównanie rezultatów(narzędzia, kwantyzacje itp.).
+% Jeżeli to będzie po ogłoszeniu wyników to wyniki konkursu.
+
+W ramach niniejszej pracy przedstawiono proces projektowania architektury sieci neuronowej z zamiarem sprzętowej akceleracji. 
+Przedstawiono to na przykładzie zadania detekcji pojedynczego obiektu. 
+System ten był opracowywany na potrzeby konkursu \emph{2021 DAC SDC}. 
+W tym celu wymagane było dokładne przeanalizowanie wymagań, a także zapoznanie z docelową platformą -- płytką rozwojową \emph{Avnet Ultra96 V2}. 
+Przedstawiono również dostępne narzędzia pozwalające na przejście z modelu zmiennoprzecinkowego, przez model kwantyzowany, aż do sprzętowej akceleracji.
+Zaproponowanie własnego rozwiązania problemu detekcji wymagało rozeznania się w już istniejących. 
+W tym celu dokonano przeglądu literatury przedstawiając zarówno rozwiązania klasyczne, jak i te wykorzystujące głębokie sieci neuronowe. 
+Szczególną uwagę zwrócono na rozwiązania energooszczędne, w tym pochodzące z poprzednich edycji konkursu.
+Uzyskana wiedza pozwoliła poprzez liczne badania na zaproponowanie własnej architektury \emph{LittleNet}. 
+Zastosowano tutaj konwwolucje \emph{depthwise} wykorzystującą wielu filtrów dla każdego kanału oraz konwolucje \emph{pointwise}.
+Rozwiązanie to osiągało dokładność $IoU = 0.78$ dla modelu zmiennoprzecinkowego.
+Przejście przez etap kwantyzacji do zapisu stałoprzecinkowego pozwoliło uzyskać już wartość $IoU = 0.7015$ (przy skalowaniu obrazu z wykorzystaniem liczb całkowitych). 
+Zdecydowano się na zaprojektowanie własnego akceleratora sprzętowego z wykorzystaniem języka \emph{System Verilog}. 
+Uzyskany akcelerator po przeprowadzonej optymalizacji osiągał przepustowość rzędu $72.7 fps$ zużywając $2739 J$ energii.
+Możliwa jest praca przy częstotliwości nawet $215$ MHz osiągając przepustowość $183 fps$ oraz zużycie energii wynoszące $1070 J$. 
+Jednakże wynik ten uzyskiwany był z pominięciem odczytu obrazów oraz wszelkiego przetwarzania z użyciem systemu procesorowego.
+Spowodowane było to niewydajną implementacją programową.
+
+Zaimplementowane rozwiązanie pozwala na osiągnięcie dobrych rezultatów. 
+Jednakże, aby rozwiązanie mogło poprawić swój wynik niezbędne jest zaimplementowanie części programowej w sposób wydajny np. wykorzystując język \emph{C} wraz z przetwarzaniem wielowątkowym.
+Zaproponowane typy akceleratorów można poszerzyć m.in. o operację pełnej konwolucji.

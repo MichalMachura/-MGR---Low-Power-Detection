@@ -1,8 +1,8 @@
 \chapter{Detekcja obiektów}
-
+\label{ch:detekcja}
 W poprzednim rozdziale przedstawiono wymagania konkursu DAC SDC 2021 oraz jego główne zadanie -- detekcję obiektów. 
 W niniejszym rozdziale przedstawione zostaną metody detekcji -- klasyczne oraz bazujące na sieciach neuronowych, 
-a także architektury sieci stosowane w rozwiązaniach energooszczędnych, w tym sieci kwantyzowane (ang. \emph{Quantized Neural Networks}, \emph{QNN}) oraz binarne (ang. \emph{Binary Neural Networks}).
+a także architektury sieci stosowane w rozwiązaniach energooszczędnych, w tym sieci kwantyzowane (ang. \emph{Quantized Neural Networks}, \emph{QNN}) oraz binarne (ang. \emph{Binary Neural Networks}, \emph{BNN}).
 
 \section{Zadanie detekcji}
 
@@ -11,7 +11,7 @@ Zakładając, iż dany jest obraz $F(y,x)$
 o szerokości $W$ i wysokości $H$
 określony na zbiorze 
 \begin{equation}
-D = \{(y,x) \in \mathbb{N} ^2 : x < W \land y < H\}
+D = \{(y,x) \in \mathbb{N} ^2 : 0 \leq x < W \land 0 \leq y < H\}
 \end{equation}
 stanowiącym zbiór pikseli obrazu (par współrzędnych) $(y,x)$ 
 oraz $P \subseteq D$ oznaczające zbiór pikseli poszukiwanego obiektu, należy znaleźć $x_{min},x_{max},y_{min}$ oraz $y_{max}$ takie, że spełnione są zależności \eqref{eq:xmin}-\eqref{eq:ymax}.
@@ -105,10 +105,10 @@ Na rysunku \ref{fig:sliding_window} przedstawiono  piramidę obrazów oraz techn
 
 Jednym z często stosowanych podejść jest algorytm \emph{Viola-Jones}\cite{viola_jones}. 
 Wykorzystywane jest tutaj okno przesuwne oraz tzw. cechy \emph{Haar}'a.
-Z obszaru definiowanego przez okno przesuwne ekstrahowane są tzw. cechy \emph{Haar}'a.
 Reprezentują one układy jasności obrazu takie jak krawędzie, linie czy narożniki. 
-Dla uzyskanych cech przeprowadzana jest klasyfikacja z użyciem wielu tzw. słabych klasyfikatorów.
-W przypadku gdy jeden klasyfikator nie stwierdza wykrycia obiektu, pozostałe etapy klasyfikacji mogą zostać pominięte dla rozpatrywanego okna.
+Z obszaru definiowanego przez okno przesuwne ekstrahowane są cechy poddawane klasyfikacji metodą \emph{AdaBoost}.
+Polega to na klasyfikacji z użyciem kaskady tzw. słabych klasyfikatorów.
+W przypadku, gdy jeden klasyfikator nie stwierdza wykrycia obiektu, pozostałe etapy klasyfikacji mogą zostać pominięte dla rozpatrywanego okna.
 Obiekt jest uznawany za wykryty jedynie, gdy dla wszystkie klasyfikatory stwierdzą obecność obiektu. 
 
 Innym przykładem może być podejście \emph{HOG}+\emph{SVM}\cite{hog} (ang. \emph{Histogram of Oriented Gradients + Support Vector Machine}). 
@@ -125,8 +125,8 @@ Następnie wyniki te są analizowane poprzez mieszaninę modeli (ang. \emph{Mixt
 Ponadto metoda ułatwia również detekcję obiektów deformowalnych tzn. mogących zmieniać kształt w perspektywie czasu np. człowiek, u którego położenie, orientacja i kształt części ciała może się zmieniać w czasie.
 
 
-Dokładność algorytmów wykorzystujących okno przesuwne jest zależna od kroku przesunięcia okna, a także liczby rozpatrywanych skal. 
-Wykorzystanie wstępnej segmentacji może pozwolić osiągnąć  lepsze rezultaty, jednakże wymagane jest uzyskanie obrazu binarnego możliwego do uzyskania w prostych przypadkach lub z użyciem złożonych algorytmów. 
+% Dokładność algorytmów wykorzystujących okno przesuwne jest zależna od kroku przesunięcia okna, a także liczby rozpatrywanych skal. 
+% Wykorzystanie wstępnej segmentacji może pozwolić osiągnąć  lepsze rezultaty, jednakże wymagane jest uzyskanie obrazu binarnego możliwego do uzyskania w prostych przypadkach lub z użyciem złożonych algorytmów. 
 
 Wspomnie metody w większości operują na technice okna przesuwnego, co ma wpływ na jakość detekcji.
 Wykorzystywane są tutaj techniki klasyfikacji na podstawie wybranych cech reprezentujących zawartość okna.
@@ -139,6 +139,7 @@ Stosując metody klasyczne zazwyczaj wymagany jest etap przetwarzania wstępnego
 Dotychczas wymienione metody wymagały wcześniejszej ekstrakcji określonych cech bądź mapy segmentacji.
 Stosując sztuczne sieci neuronowe (ang. \emph{Artificial Neural Networks}) możliwe jest połączenie etapów przetwarzania wstępnego, ekstrakcji cech, klasyfikacji jak również określenia położenia i wymiarów obiektu. 
 Pozwala to zarówno na względne uproszczenie systemu detekcji, lecz często również na osiągnięcie lepszych rezultatów. 
+Odbywa się to kosztem zwiększenia złożoności obliczeniowej oraz wymaga złożonego procesu uczenia z użyciem dużych zbiorów danych.
 W podrozdziale zostaną opisane wybrane metody detekcji wykorzystujące sieci neuronowe, a także wybrane architektury z przeznaczeniem sprzętowej implementacji.
 
 \subsection{Wstęp do sztucznych sieci neuronowych}
@@ -146,32 +147,46 @@ Sztuczne sieci neuronowe stanowią algorytmy przetwarzania danych inspirowane bi
 Wykorzystywane jest tutaj pojęcie tzw. sztucznego neuronu jako odpowiednika biologicznej komórki nerwowej. 
 % Neurony stanowią główny element budulcowy sieci.
 Neurony stanowią funkcje przetwarzające podane sygnały wejściowe oraz zwracające rezultat w postaci sygnałów wyjściowych. 
-Mogą również posiadać parametry zwane wagami, a także elementy pamięci.
-Neurony grupuje się w tzw. warstwy (ang. \emph{layers}), które następnie odpowiednio łączy się ze sobą tworząc strukturę sztucznej sieci neuronowej.
+Schemat neuronu przedstawiono na rysunku \ref{fig:neuron}.
+Przedstawiony neuron realizuje operację iloczynu skalarnego pomiędzy wektorem wag $w$ oraz wektorem sygnałów wejściowych $x$ (wliczając stałą 1 stanowiącą sygnał bias).
+Uzyskany rezultat jest najczęściej poddawany aktywacji wybraną funkcją nieliniową.
+Neurony mogą posiadać parametry zwane wagami (lecz nie muszą), a także elementy pamięci.
+Neurony grupuje się w tzw. warstwy (ang. \emph{layers}), które następnie odpowiednio łączy się ze sobą tworząc strukturę sztucznej sieci neuronowej (rysunek \ref{fig:net_schem}).
 Dane wejściowe sieci są propagowane przez kolejne warstwy, aż do warstw stanowiących wyjść sieci.
 Otrzymany rezultat jest zależny od parametrów neuronów poszczególnych warstw.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{images/neuron.png}
+    \caption{Schemat neuronu. Źródło: \cite{neuron}.}
+    \label{fig:neuron}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{images/net_schem.png}
+    \caption{Schemat sieci neuronowej. Źródło: \cite{net_schem}.}
+    \label{fig:net_schem}
+\end{figure}
+
 Sieć neuronowa posiada zdolność uczenia się tzn. zmian wartości parametrów na podstawie kolejno przedstawianych wzorców uczących wraz z prezentowaniem referencyjnych rezultatów wyjściowych.
 Proces ten nazywa się uczeniem sieci neuronowej.
-Do tego celu definiuje się funkcję błędu wyjść, a następnie wyznacza się jej gradient poprzez tzw. propagację wsteczną błędu.
+Do tego celu definiuje się funkcję błędu wyjść, a następnie odpowiednio aktualizuje się wagi z wykorzystaniem tzw. propagacji wstecznej błędu.
 Jednokrotne przedstawienie zbioru uczącego nazywane jest epoką, w trakcie której następuje aktualizacja wag modelu sieci neuronowej.
 Ponadto warstwy nie posiadające bezpośredniego połączenia z wyjściem sieci nazywane są warstwami ukrytymi.
 Sieć która posiada przynajmniej jedną warstwę ukrytą (realizującą operacje nielinowe) nazywana jest głęboką siecią neuronową (ang. \emph{Deep Neural Network}).
 Sieć głęboka zyskuje zdolność wykształcania cech w procesie uczenia przez warstwy ukryte. 
 Każda kolejna warstwa ukryta wykształca bardziej ogólne cechy. 
-Dokładniejsze omówienie sztucznych sieci neuronowych, nawiązanie do biologicznych odpowiedników, wybrane własności oraz metody uczenia można znaleźć 
-w projekcie dyplomowym autora \cite{inż}. 
-% w pracy inżynierskiej autora \cite{inż}. 
+Dokładniejsze omówienie sztucznych sieci neuronowych, nawiązanie do biologicznych odpowiedników, wybrane własności oraz metody uczenia można znaleźć \cite{SN_tadeusiewicz} oraz \cite{net_train}. 
 Opisano tam przede wszystkim warstwy neuronów realizujących połączenia typu ``każdy z każdym'', nazywane warstwami gęsto połączonymi (ang. \emph{Densly Connected}) lub w pełni połączonymi (ang. \emph{Fully Connected}, \emph{FC}). 
 Każdy neuron realizuje tam operacje iloczynu skalarnego wektora sygnałów wejściowych z wektorem wag, niezależnie dla każdego neuronu.
 % Ponadto warstwy te posiadają dużą skłonność do tzw. przeuczania, czyli nadmiernego dopasowywania (ang. \emph{overfitting}) do danych tracą zdolności generalizacji.
 
-Zastosowanie głębokich sieci neuronowych wykorzystujących warstwy \emph{FC} dla problemów przetwarzania danych tego samego typu o znacznych rozmiarach, takich jak obrazy (a także sygnały dźwiękowe, czy serie danych) skutkuje znaczącym rozbudowaniem architektury oraz wzrostem złożoności obliczeniowej. 
+Zastosowanie głębokich sieci neuronowych wykorzystujących warstwy \emph{FC} dla problemów przetwarzania danych tego samego typu o znacznych rozmiarach, takich jak obrazy (a także sygnały dźwiękowe, czy serie danych) skutkuje znaczącym rozbudowaniem architektury, wzrostem złożoności obliczeniowej, a także trudnościami w procesie uczenia. 
 Możliwe jest wówczas zastosowanie tzw. konwolucyjnych sieci neuronowych (ang. \emph{Convolutional Neural Networks}, \emph{CNN}).
 Definiują one sposób przetwarzania danych w każdej warstwie w sposób identyczny dla każdego neuronu wyznaczającego daną cechę.
 Pozwala to na uproszczenie obliczeń, a także na zwiększenie zdolności generalizowania danych.
-Stanowi to operację konwolucji realizowaną w przestrzeni cech (lub obrazu dla warstwy wejściowej) z wykorzystaniem maski konwolucji o zadanym rozmiarze otoczenia oraz kształcie (elementy maski mogą zostać ``rozsunięte'' tzw. \emph{dilation}). 
-Ponadto możliwe jest wykonanie operacji konwolucji z krokiem więszym od $1$, co skutkuje zmniejszeniem rozmiaru wynikowej mapy cech.
+Podstawą jest operacja konwolucji realizowana w przestrzeni cech (lub obrazu dla warstwy wejściowej) z wykorzystaniem maski konwolucji o zadanym rozmiarze otoczenia oraz kształcie (elementy maski mogą zostać ``rozsunięte'' tzw. \emph{dilation}). 
+Ponadto możliwe jest wykonanie operacji konwolucji z krokiem większym od $1$, co skutkuje zmniejszeniem rozmiaru wynikowej mapy cech.
 Za rodzaj wyznaczanych cech odpowiedzialny jest typ warstwy oraz ewentualne wagi filtrów. 
 Wśród najczęściej stosowanych typów warstw konwolucyjnych wymienić można:
 \begin{description}
@@ -192,6 +207,8 @@ Na rysunku \ref{fig:example_layers} przedstawiono przykładową architekturę si
 Wykorzystanie warstw \emph{FC} sprawia, iż wymagany jest stały rozmiar obrazu wejściowego.
 W sytuacji gdy architektura sieci składa się tylko z warstw konwolucyjnych rozmiar danych wejściowych jest niezależny od architektury. 
 Architekturę taką nazywa się w pełni konwolucyjną (ang. \emph{Fully Convolutional Neural Network}, \emph{FCNN}).
+Warto również wspomnieć o technice transferu wiedzy (ang. \emph{trasfer learning}). 
+Polega ona na inicjalizacji wag wagami pochodzącymi od sieci już nauczonej (zazwyczaj na dużym zbiorze danych takim jak np. \emph{ImageNet}).
 \begin{figure}
     \centering
     \includegraphics[width=0.9\linewidth]{images/layers_.png}
@@ -212,7 +229,7 @@ Z tego powodu proponowane obszary są skalowane do ustalonego rozmiaru.
 Ekstrakcja cech odbywa się z użyciem przetrenowanej (np. na zbiorze \cite{imagenet}) sieci CNN.
 Możliwe jest wykorzystanie dowolnych architektur CNN np. \emph{AlexNet} \cite{alexnet}, \emph{VGG-16} \cite{vgg}.
 Ostatni etap to klasyfikacja oraz regresja.
-W tym celu należy przeprowadzić trening dowolnego klasyfikatora np.\emph{SVM} stwierdzającego obecność lub brak rozpatrywanego typu obiektu w rozpatrywanym obszarze.
+W tym celu należy przeprowadzić trening dowolnego klasyfikatora np. sieć \emph{FC} lub \emph{SVM} stwierdzającego obecność lub brak rozpatrywanego typu obiektu w rozpatrywanym obszarze.
 W przypadku wykrycia obiektu znane są jego przybliżone położenie oraz wymiary.
 Celem zwiększenia dokładności detekcji dokonywane są estymaty położenia i wymiarów, poprzez regresję liniową.
 
@@ -228,17 +245,16 @@ Obie wspomniane metody bazowały na proponowanych poprzez wybrany algorytm regio
 Etap ten można zastąpić użyciem do tego celu wytrenowanej sieci neuronowej nazywanej \emph{Region Proposal Network} (RPN).
 Ponadto sieć ta może bazować na mapach cech wykorzystywanych do ekstrakcji wektorów cech stałowymiarowych  dla proponowanych regionów. 
 Rozwiązanie to nazywane jest \emph{Faster R-CNN} \cite{faster_rcnn}.
-
 \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.48\textwidth}
          \centering
          \includegraphics[width=\textwidth]{images/rcnn.png}
          \caption{}
          \label{fig:rcnn}
      \end{subfigure}
      \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.48\textwidth}
          \centering
          \includegraphics[width=\textwidth]{images/ffrcnn.png}
          \caption{}
@@ -247,20 +263,18 @@ Rozwiązanie to nazywane jest \emph{Faster R-CNN} \cite{faster_rcnn}.
      \hfill
     \begin{subfigure}[b]{0.9\textwidth}
          \centering
-         \includegraphics[width=\textwidth]{images/frcnn.png}
+         \includegraphics[width=0.8\textwidth]{images/frcnn.png}
          \caption{}
          \label{fig:frcnn}
      \end{subfigure}
      \hfill
-     
     \caption{Architektury \emph{R-CNN} \ref{fig:rcnn}, \emph{Faster R-CNN} \ref{fig:ffrcnn} oraz \emph{Fast R-CNN} \ref{fig:frcnn}. Źródło: \cite{medium_rcnn}.}
     \label{fig:rcnns}
 \end{figure}
 
 \subsection{SSD}
-
 Systemy detekcji bazujące na rozwiązaniu \emph{R-CNN} wymagają dwuetapowego przetwarzania obrazu.
-W architekturze \emph{Single Shot Detector} (SSD) \cite{ssd} detekcja obiektów wykonywana jest jednoetapowo. 
+W architekturze \emph{Single Shot Detector} (SSD) \cite{ssd} detekcja obiektów wykonywana jest jednoetapowo.
 Wykorzystywana do tego celu jest jednokierunkowa sieć w pełni konwolucyjna (ang. \emph{Fully Convolutional Neural Network},\emph{FCNN}) stanowiąca tzw. sieć bazową (ang. \emph{base network}) przetrenowaną do zadania klasyfikacji (bez "głowy" klasyfikatora).
 Za ostatnią warstwą sieci bazowej dołączane są dodatkowe warstwy konwloucyjne oraz \emph{Max pooling} celem zmniejszenia rozmiaru map cech.
 Do wybranych warstw pośrednich przyłączane są kolejne warstwy tworząc rozgałęzienia.
@@ -269,6 +283,7 @@ Na rysunku \ref{fig:ssd_arch} przedstawiono architekturę \emph{SSD}, gdzie jako
 Estymacja wymiarów odbywa się względem ustalonych wymiarów $(d_w, d_h)$ nazywanych \emph{default box} (dla każdego zastawu filtrów detekcja + klasyfikacja może zostać dobrany inny wymiar $(d_w, d_h)$).
 Położenie obiektu jest wyznaczane w oparciu o rezultaty odpowiednich filtrów ($f_x, f_y, f_w, f_h$), lecz także o ich położenie $(i,j)$ w siatce (ang. \emph{grid}) wynikającej z wymiarów warstwy $(d_N, d_M)$ znormalizowane do wymiarów \emph{default box}.
 Ostatecznie detekcja parametrów obiektu daje się przedstawić za pomocą równań \eqref{eq:xs_ssd}-\eqref{eq:h_ssd} ($(W, H)$ oznaczają wymiary obrazu wejściowego). 
+
 \begin{figure}
     \centering
     \includegraphics[width=0.9\linewidth]{images/ssd_img.png}
@@ -282,6 +297,7 @@ Ostatecznie detekcja parametrów obiektu daje się przedstawić za pomocą równ
     \caption{Siatka detekcji dla $D$ \emph{default box}. Poprzez $db$ oznaczono grupę filtrów przypisanych do konkretnego \emph{defult box}. Filtry $v0,...vc$ oznaczają kolejne klasy obiektów.}
     \label{fig:ssd_grid}
 \end{figure}
+
 \begin{equation}
 x_s = (\frac{j}{d_N}+ 0.5)W + d_w f_x(i,j)
 \label{eq:xs_ssd}
@@ -334,7 +350,8 @@ Poprzez $R$ oznaczono zbiór parametrów referencyjnych $r$ opisujących dany ob
 \label{eq:total_SSD}
 \end{equation}
 
-W przedstawionych równaniach filtr wykrycia obiektu nie występuje jawnie, lecz pod postacią klasy ``niewykrycia obiektu''.
+W przedstawionych równaniach filtr wykrycia obiektu nie występuje jawnie, lecz pod postacią klasy ``niewykrycia obiektu''. 
+Architektura \emph{SSD} znacząco upraszcza implementację zadania detekcji, poprzez jednoetapowe przetwarzanie obrazu. 
 
 
 \subsection{YOLO}
@@ -376,8 +393,10 @@ w = a_w e^{f_w}
 h = a_h e^{f_h}
 \label{eq:h_yolov2}
 \end{equation}
-Zastosowanie funkcji logistycznej w estymacji położenia pozwala na osiągnięcie większej stabilności detekcji, czy korelacji pomiędzy wykryciem obiektu w siatce, a predykcją jego położenia.
-Dla liniowej estymaty możliwe było wskazanie położenia w obrębie innego elementu siatki, ze względu brak ograniczenia przyjmowanych wartości poszczególnych neuronów \cite{yolov2}. 
+Zastosowanie funkcji logistycznej w estymacji położenia pozwala na osiągnięcie większej stabilności regresji \cite{yolov2}, czy korelacji pomiędzy wykryciem obiektu w siatce, a predykcją jego położenia.
+Linowa estymacja odchyłki położenia pozwalała  na ''przesunięcie'' obiektu do elementu siatki o niskiej wartości wykrycia. 
+Wiązało by się to co najmniej z brakiem spójności pomiędzy wykryciem obiektu, a jego położeniem.
+Powodem tego był brak ograniczenia przyjmowanych wartości poszczególnych neuronów. 
 Ponadto referencyjne wartości wykrywalności obiektu dla \emph{YOLOv2} stanowią wartość współczynnika $IoU$ pomiędzy obiektem referencyjnym, a rozpatrywanym \emph{anchor box} (stanowiącym odpowiednik \emph{default box} w \emph{SSD}). 
 Dla \emph{YOLOv3} wykrywalność obiektu (autorzy używają sformułowania \emph{objectness score} \cite{yolov3}) jest zrealizowana jako regresja logistyczna. 
 Z tego powodu wartości referencyjne przyjmują wartość $1$ w przypadku, gdy wartość $IoU$ jest większa niż ustalona wartość progowa oraz $0$ w przeciwnym przypadku. 
@@ -438,11 +457,10 @@ Analizując powyższe wzory można dostrzec, iż gdy:
 Funkcja $DIoU$ minimalizuje odstęp pomiędzy obiektami, $CIoU$ rozwija tę funkcję o skalowanie wymiarów, natomiast $GIoU$ pozwala na ograniczenie obszaru poza obiektami referencyjnym oraz wyznaczonym z odpowiedzi sieci.
 Na rysunku \ref{fig:iou_losses} przedstawiono graficzne interpretacje błędów.
 
-
 \begin{figure}
     \centering
      \includegraphics[width=0.4\linewidth]{images/gcdiou.png}
-    \caption{ Graficzna reprezentacja $GIoU$, $DIoU$ dla obiektów (kol. czerwony i zielony) o tym samym stosunku wymiarów ($ciou_{part} = 0$). $diou_{parts}$ to stosunek długości linii żółtej do pomarańczowej. $giou_{part}$ to stosunek szarego pola powierzchni do pola powierzchni czarnego prostokąta (wyznaczonego przez prostokąty czerwony oraz zielony).}
+    \caption{ Graficzna reprezentacja $GIoU$, $DIoU$ dla obiektów $A$(czerwony)  oraz $B$ (zielony) o tym samym stosunku wymiarów ($ciou_{part} = 0$). $diou_{parts}$ to stosunek długości linii żółtej do pomarańczowej. $giou_{part}$ to stosunek szarego pola powierzchni do pola powierzchni ($C \setminus (A\cupB)$) czarnego prostokąta $C$.}
     \label{fig:iou_losses}
 \end{figure}
 
@@ -473,6 +491,13 @@ Rysunki \ref{fig:dw} oraz \ref{fig:pw} przedstawiają schemat konwolucji \emph{D
     \hfill
     \begin{subfigure}[b]{0.98\textwidth}
     \centering
+    \includegraphics[width=\textwidth]{images/std_conv.png}
+    \caption{}
+    \label{fig:std_conv}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.98\textwidth}
+    \centering
     \includegraphics[width=\textwidth]{images/dw_conv.png}
     \caption{}
     \label{fig:dw}
@@ -485,7 +510,7 @@ Rysunki \ref{fig:dw} oraz \ref{fig:pw} przedstawiają schemat konwolucji \emph{D
     \label{fig:pw}
     \end{subfigure}
     
-    \caption{Schemat konwolucji \emph{depthwise} \ref{fig:dw} oraz \emph{pointwise} \ref{fig:pw}.}
+    \caption{Schemat konwolucji pełnej\ref{fig:std_conv}, \emph{depthwise} \ref{fig:dw} oraz \emph{pointwise} \ref{fig:pw}.}
     \label{fig:dw_pw_schema}
 \end{figure}
 
