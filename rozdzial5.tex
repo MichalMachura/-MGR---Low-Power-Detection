@@ -27,7 +27,10 @@ Ponadto zaimplementowano także konwersję wag zmiennoprzecinkowych do stałoprz
 \section{Implementacja sprzętowa}
 
 Wstępnie planowano implementacje sprzętową z~wykorzystaniem narzędzia \emph{FINN} \ref{ch:tools}.
-Jednakże ze względu na braki w~dokumentacji (np. implementacja własnej metody kwantyzacji w \emph{Brevitas}) zdecydowano się na implementację własną początkowo w~języku wysokopoziomowym \emph{HLS}, lecz ostatecznie w~języku opisu sprzętu \emph{System Verilog}.
+Jednakże ze względu na braki w~dokumentacji (np. implementacja własnej metody kwantyzacji w~\emph{Brevitas}), a~także brak możliwości akceleracji warstwy \emph{BN} (przynajmniej bezpośrednio) zdecydowano się na implementację własną.
+Początkowo w~języku wysokopoziomowym \emph{HLS}, lecz ostatecznie w~języku opisu sprzętu \emph{System Verilog}
+%, uzyskując w ten sposób pełną kontrolę sposobem implementacji
+.
 Akceleracja całej sieci stanowi architekturę potokową gruboziarnistą (ang. \emph{coarse grained}).
 Schemat przedstawiono na rysunku \ref{fig:LNACC}.
 Na elementy wspomnianej architektury składają się:
