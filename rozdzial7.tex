@@ -19,15 +19,16 @@ Zdecydowano się na zaprojektowanie własnego akceleratora sprzętowego z~wykorz
 Moduł, po przeprowadzonej optymalizacji, osiągał przepustowość rzędu $72.7 fps$ zużywając $2739 J$ energii.
 Możliwa jest praca przy częstotliwości nawet $215$ MHz osiągając przepustowość $183 fps$ oraz zużycie energii wynoszące $1070 J$. 
 Jednakże wynik ten uzyskiwany był z~pominięciem odczytu obrazów oraz wszelkiego przetwarzania z~użyciem systemu procesorowego.
-Zatem na obecnym etapie ''wąskim gardłem'' jest niewydajna implementacją programową
-i opisany powyżej zabieg nie uzasadnienia.
+Zatem na obecnym etapie ''wąskim gardłem'' jest niewydajna implementacją programowa
+i~opisany powyżej zabieg nie ma uzasadnienia.
 
 Zaimplementowane rozwiązanie pozwala na osiągnięcie dobrych rezultatów. 
-Jednakże, aby możliwe było poprawienie rezultatu niezbędne jest zaimplementowanie części programowej w~sposób wydajny np. wykorzystując język \emph{C} wraz z~przetwarzaniem wielowątkowym.
+Jednakże, aby możliwe było poprawienie wydajności niezbędne jest zaimplementowanie części programowej w~sposób wydajny np. wykorzystując język \emph{C} wraz z~przetwarzaniem wielowątkowym.
 Na etapie uczenia zastosowano funkcję \emph{GCIoU} \eqref{eq:gciou}, której rezultaty należy jeszcze porównać z innymi funkcjami bazującymi na metryce \emph{IoU}.
-Możliwe jest również zwiększenie dokładności obliczeń poprzez zmniejszenie stopnia kwantyzacji (zapis wykorzystujący więcej bitów).
+Możliwe jest również zwiększenie dokładności obliczeń poprzez zmniejszenie stopnia kwantyzacji (zapis wykorzystujący więcej bitów) czy też uzależnienie go od konkretnych warstw (różna kwantyzacja dla warstw).
+Ponadto możliwe jest zredukowanie rozmiaru sieci, poprzez usunięcie wybranych filtrów tzw. \emph{pruning}.
 Dobór liczby bitów części całkowitej można spróbować zrealizować w sposób automatyczny, poprzez ustanowienie jako parametr podlegający uczeniu.
 Zaproponowane typy akceleratorów można również poszerzyć m.in. o~operację pełnej konwolucji, czy warstwy \emph{FC}.
-Ponadto proces uczenia sieci można zrealizować z np. z użyciem klastra obliczeniowego \emph{Prometeusz} z \emph{Akademickiego Centrum
+Ponadto proces uczenia sieci można zrealizować np. z~użyciem klastra obliczeniowego \emph{Prometeusz} z \emph{Akademickiego Centrum
 Komputerowego CYFRONET}.
 %, tym samym pozbywając rezygnując z limitów usługi \emph{GoogleColab}.

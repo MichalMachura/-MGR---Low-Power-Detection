@@ -41,10 +41,7 @@ Blok \emph{AXIS RECEIVER} odbiera i przekształca strumień danych do postaci wy
 \item \emph{ROM}(ang. \emph{Read-Only Memory}) - przechowywanie wag poszczególnych warstw.
 \item \emph{RAM})(ang. \emph{Random Access Memory}) - przechowywanie danych wejściowych oraz rezultatów poszczególnych akceleratorów.
 \item multipleksery - zarządzanie dostępem do pamięci.
-\item \emph{DW, PW, BN, MP, B} - bloki akceleratorów warstw w zadanych konfiguracjach.
-Poszczególne akceleratory pogrupowane są po 3 w~bloku. 
-Na jeden blok przypisane są dwa bloki pamięci RAM, w~tym jeden z~dostępem  multipleksowanym.
-Ma to na celu ograniczenie wymaganej pamięci, kosztem zmniejszenia przepustowości. 
+\item \emph{DW, PW} - bloki akceleratorów warstw \emph{depthwise} oraz \emph{pointwise} w zadanych konfiguracjach (\emph{BN, MP, B} - odpowiednio warstwa normalizacyjnna, \emph{Max Pooling}, bias).
 \item \emph{SSR} - rejestr szeregowo-równoległy (ang. \emph{Serial-Parallel Register}) realizuje odbiór danych z ostatniej warstwy.
 \item \emph{LN\_CU} (ang. \emph{LittleNet Control Unit}) -  logika sterująca procesem akceleracji.
 \end{description}
@@ -53,6 +50,9 @@ Ma to na celu ograniczenie wymaganej pamięci, kosztem zmniejszenia przepustowo�
 % Wykorzystywana jest tutaj komunikacja z~wykorzystaniem protokołu \emph{AXI4-Stream} \cite{axis} do komunikacji z~\emph{DMA} (ang. \emph{Direct Memory Access}) \cite{dma}.
 % Wymiana danych odbywa się za pośrednictwem  modułów \emph{AXIS RECEIVER} do odbioru oraz \emph{AXIS SENDER} do wysyłania danych zgromadzonych w~rejestrze \emph{SPR} (ang. \emph{Serial-Parallel Register}).
 
+Poszczególne akceleratory pogrupowane są po (co najwyżej) 3 w~bloku. 
+Na jeden blok przypisane są dwa bloki pamięci RAM, w~tym jeden z~dostępem  multipleksowanym.
+Ma to na celu ograniczenie wymaganej łącznej pamięci, kosztem zmniejszenia przepustowości. 
 Proces akceleracji odbywa się według schematu prezentowanego w~tabeli \ref{tab:LNACC}.
 Zostało to zrealizowane w postaci maszyny stanów.
 W danym stanie 0-3 aktywne są akceleratory 0-2 z bloków 0-5, dla których występuje wartość 1.
