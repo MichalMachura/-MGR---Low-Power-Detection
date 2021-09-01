@@ -1,34 +1,42 @@
 \chapter{Wprowadzenie}
 \label{cha:wprowadzenie}
 
-Rozwój technologi takich jak pojazdy autonomiczne, roboty humanoidalne, systemy nadzorcze czy systemy automatycznej kontroli wymagają stosowania rozwiązań o~ wysokiej skuteczności.
-We wspomnianych technologiach, często wymagane jest rozpoznawania otoczenia w~ czasie rzeczywistym.
-Możliwe jest to miedzy innymi poprzez realizację zadania detekcji wybranych typów obiektów za pomocą systemów percepcji takich jak \emph{LiDAR} czy kamery. 
+Rozwój technologii takich jak pojazdy autonomiczne, roboty humanoidalne, systemy nadzorcze czy systemy automatycznej kontroli wymagają stosowania szeroko rozumianych systemów percepcji o~wysokiej skuteczności.
+Możliwe jest to miedzy innymi poprzez realizację zadania detekcji wybranych typów obiektów na podstawie danych z czujników  takich jak kamery, radar czy \emph{LiDAR}.
+Otrzymane w rezultacie parametry obiektu, takie jak położenie czy wymiary, pozwalają na podjęcie stosownej akcji np. ominiecie przeszkody czy dotarcie do wybranego celu.
+We wspomnianych systemach, często wymagane jest też działanie w~czasie rzeczywistym, przy ograniczonym budżecie energetycznym. 
 
-Rozwiązaniami cechującymi się wysoką skutecznością są algorytmy sztucznej inteligencji, a~ w~ szczególności sieci neuronowe.
-Rozwiązania te jednak cechują się wysoką złożonością obliczeniową.
-W przypadku systemów stacjonarnych problem ten można rozwiązać poprzez zastosowanie urządzeń zapewniających dużą moc obliczeniową takich jak karty graficzne.
-Rozwiązanie to jednak nie zawsze jest możliwe dla zastosowań mobilnych wymagających technologii o~ niskim zużyciu energii.
-W takich sytuacjach korzystnym wydaje się być zastosowanie układów \emph{FPGA}
+Rozwiązaniami cechującymi się wysoką skutecznością są algorytmy sztucznej inteligencji, a~w~szczególności sieci neuronowe.
+Jednak charakteryzują się on również znaczną złożonością obliczeniową.
+W przypadku systemów stacjonarnych problem ten można rozwiązać poprzez zastosowanie urządzeń zapewniających dużą moc obliczeniową, takich jak wydajne karty graficzne (GPU, ang. \emph{Graphics Processing Unit}).
+Jednak takie podejście nie zawsze jest możliwe dla zastosowań mobilnych -- pojazdów autonomicznych, robotów, dronów -- gdzie dostępny budżet energetyczny jest ograniczony.
+W takich sytuacjach jedną z możliwości jest zastosowanie układów \emph{FPGA} (ang. \emph{field-programmable gate array}) czy \emph{SoC} (ang. \emph{System on Chip})
 oraz tzw. sieci kwantyzowanych (ang. \emph{Quantized Neural Networks}).
-Rozwiązania te pozwalają osiągać zarówno wysoką skuteczność, niewielkie zużycie energii jak i~ wysoką przepustowość pozwalającą na zastosowanie w~ systemach czasu rzeczywistego.
+Rozwiązania te pozwalają osiągać zarówno wysoką skuteczność, niewielkie zużycie energii jak i~wysoką przepustowość pozwalającą na zastosowanie w~systemach czasu rzeczywistego.
+Zastosowanie nie ogranicza się jedynie do urządzeń mobilnych. 
+Możliwe jest również stosowanie w serwerowniach pozwalając nie tylko przyspieszyć obliczenia, lecz również zredukować zużycie energii.  
 
-\section{Cele pracy}
+Oba wspomniane zagadnienia detekcji oraz akceleracji są na tyle istotne, iż społeczność naukowa organizuje konkursy, takie jak \emph{DAC SDC} (ang. \emph{ 2021 Design automation Conference System Design Contest}) czy \emph{LPVC} (ang. \emph{Low Power Vision Challenge}).
+ 
+
+\section{Cel pracy}
 \label{sec:celePracy}
-Celem niniejszej pracy jest implementacja głębokiej sieci neuronowej na wbudowanej platformie obliczeniowej - układzie \emph{Zynq UltraScale+ MPSoC}.
-System jest opracowywany na potrzeby konkursu \emph{2021 DAC SDC}.
+Celem niniejszej pracy jest implementacja głębokiej sieci neuronowej na wbudowanej platformie obliczeniowej -- układzie \emph{Zynq UltraScale+ MPSoC}.
+System jest opracowywany na potrzeby konkursu \emph{2021 DAC SDC} (ang. \emph{ 2021 Design automation Conference System Design Contest}).
 Zadaniem jest detekcja obiektów na zdjęciach zarejestrowanych przez drona. 
 Wymagane jest osiągnięcie wysokiej przepustowości oraz skuteczności, przy jednoczesnym niewielkim zużyciu energii. 
-Do tego celu należy przeprowadzić niezbędne badania literatury pozwalające na zaproponowanie własnego rozwiązania problemu wykorzystującego akcelerację sprzętową obliczeń.
+%Do tego celu należy przeprowadzić niezbędne badania literatury pozwalające na zaproponowanie własnego rozwiązania problemu wykorzystującego akcelerację sprzętową obliczeń.
 
 %---------------------------------------------------------------------------
 
 \section{Zawartość pracy}
 \label{sec:zawartoscPracy}
-W pracy przedstawiono zagadnienia związane z~ uczeniem sieci neuronowych, a~ także ich implementacją. Ze względu na uczestnictwo w~ konkursie w~ rozdziale \ref{cha:Analiza probemu} przedstawiono szczegółowe wymagania i~ założenia dotyczące m.in. implementacji i~ oceny rozwiązania. Przedstawiono także opis docelowej platformy obliczeniowej oraz omówiono narzędzia wspomagające implementacje sprzętową.
-W rozdziale \ref{ch:detekcja} zrealizowano przegląd metod detekcji klasycznych oraz opartych o~ sieci neuronowe, w~ szczególności o~ rozwiązania energooszczędne.
-Badania nad architekturą oraz proces uczenia i~ kwantyzacji zostały opisane w~ rozdziale \ref{cha:Badania wstępne}.
-Rozdział \ref{cha:Implementacja} przedstawia implementację opracowanej architektury zarówno programową jak i~ sprzętową. 
-Uzyskane rezultaty oraz przeprowadzoną optymalizację zawarto w~ rozdziale \ref{cha:Optymalizacja}. 
-W rozdziale \ref{cha:Podsumowanie} podsumowano pracę oraz przedstawiono wnioski z~ niej płynące. 
+W pracy przedstawiono zagadnienia związane z~uczeniem sieci neuronowych, a~także ich implementacją. 
+Z~uwagi na uczestnictwo w~konkursie w~rozdziale \ref{cha:Analiza probemu} przedstawiono szczegółowe wymagania i~założenia dotyczące m.in. implementacji i~oceny rozwiązania. 
+Przedstawiono także opis docelowej platformy obliczeniowej oraz omówiono narzędzia wspomagające implementację sprzętową sieci neuronowych.
+W rozdziale \ref{ch:detekcja} zaprezentowano przegląd metod detekcji klasycznych oraz opartych o~sieci neuronowe, w~szczególności rozwiązania energooszczędne.
+Badania nad architekturą oraz proces uczenia i~kwantyzacji zostały opisane w~rozdziale \ref{cha:Badania wstępne}.
+Rozdział \ref{cha:Implementacja} przedstawia implementację opracowanej architektury zarówno programową jak i~sprzętową. 
+Uzyskane rezultaty oraz przeprowadzoną optymalizację omówiono w~rozdziale \ref{cha:Optymalizacja}. 
+W rozdziale \ref{cha:Podsumowanie} podsumowano pracę oraz przedstawiono wnioski z~niej płynące. 
 

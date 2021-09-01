@@ -4,24 +4,30 @@
 % Porównanie rezultatów(narzędzia, kwantyzacje itp.).
 % Jeżeli to będzie po ogłoszeniu wyników to wyniki konkursu.
 
-W ramach niniejszej pracy przedstawiono proces projektowania architektury sieci neuronowej z~ zamiarem sprzętowej akceleracji. 
-Przedstawiono to na przykładzie zadania detekcji pojedynczego obiektu. 
+W ramach niniejszej pracy przedstawiono proces projektowania architektury sieci neuronowej do detekcji obiektów, która została następnie zaimplementowana na platformie sprzętowo-programowej Zynq UltraScale+ MPSoC.
 System ten był opracowywany na potrzeby konkursu \emph{2021 DAC SDC}. 
-W tym celu wymagane było dokładne przeanalizowanie wymagań, a~ także zapoznanie z~ docelową platformą -- płytką rozwojową \emph{Avnet Ultra96 V2}. 
-Przedstawiono również dostępne narzędzia pozwalające na przejście z~ modelu zmiennoprzecinkowego, przez model kwantyzowany, aż do sprzętowej akceleracji.
-Zaproponowanie własnego rozwiązania problemu detekcji wymagało rozeznania się w~ już istniejących. 
-W tym celu dokonano przeglądu literatury przedstawiając zarówno rozwiązania klasyczne, jak i~ te wykorzystujące głębokie sieci neuronowe. 
-Szczególną uwagę zwrócono na rozwiązania energooszczędne, w~ tym pochodzące z~ poprzednich edycji konkursu.
-Uzyskana wiedza pozwoliła poprzez liczne badania na zaproponowanie własnej architektury \emph{LittleNet}. 
-Zastosowano tutaj konwwolucje \emph{depthwise} wykorzystującą wielu filtrów dla każdego kanału oraz konwolucje \emph{pointwise}.
+% W tym celu wymagane było dokładne przeanalizowanie wymagań, a~także zapoznanie z~docelową platformą -- płytką rozwojową \emph{Avnet Ultra96 V2}. 
+% Przedstawiono również dostępne narzędzia pozwalające na przejście z~modelu zmiennoprzecinkowego, przez model kwantyzowany, aż do sprzętowej akceleracji.
+% Zaproponowanie własnego rozwiązania problemu detekcji wymagało rozeznania się w~już istniejących. 
+% W tym celu dokonano przeglądu literatury przedstawiając zarówno rozwiązania klasyczne, jak i~te wykorzystujące głębokie sieci neuronowe. 
+Analizując stawiane wymagania, parametry docelowej platformy sprzętowej, a także rozwiązania z poprzednich edycji zaproponowano architekturę sieci \emph{LittleNet}.
+Zastosowano konwwolucje \emph{depthwise} wykorzystującą wielu filtrów dla każdego kanału oraz konwolucje \emph{pointwise}.
 Rozwiązanie to osiągało dokładność $IoU = 0.78$ dla modelu zmiennoprzecinkowego.
-Przejście przez etap kwantyzacji do zapisu stałoprzecinkowego pozwoliło uzyskać już wartość $IoU = 0.7015$ (przy skalowaniu obrazu z~ wykorzystaniem liczb całkowitych). 
-Zdecydowano się na zaprojektowanie własnego akceleratora sprzętowego z~ wykorzystaniem języka \emph{System Verilog}. 
-Uzyskany akcelerator po przeprowadzonej optymalizacji osiągał przepustowość rzędu $72.7 fps$ zużywając $2739 J$ energii.
+Przejście przez etap kwantyzacji do zapisu stałoprzecinkowego pozwoliło uzyskać już wartość $IoU = 0.7015$ (przy skalowaniu obrazu z~wykorzystaniem liczb całkowitych).
+Wartość ta niestety tylko w niewielkim stopniu przekracza próg pozwalający na osiągnięcie maksymalnej wartości funkcji oceny dokładności detekcji.
+Zdecydowano się na zaprojektowanie własnego akceleratora sprzętowego z~wykorzystaniem języka \emph{System Verilog}. 
+Moduł, po przeprowadzonej optymalizacji, osiągał przepustowość rzędu $72.7 fps$ zużywając $2739 J$ energii.
 Możliwa jest praca przy częstotliwości nawet $215$ MHz osiągając przepustowość $183 fps$ oraz zużycie energii wynoszące $1070 J$. 
-Jednakże wynik ten uzyskiwany był z~ pominięciem odczytu obrazów oraz wszelkiego przetwarzania z~ użyciem systemu procesorowego.
-Spowodowane było to niewydajną implementacją programową.
+Jednakże wynik ten uzyskiwany był z~pominięciem odczytu obrazów oraz wszelkiego przetwarzania z~użyciem systemu procesorowego.
+Zatem na obecnym etapie ''wąskim gardłem'' jest niewydajna implementacją programową
+i opisany powyżej zabieg nie uzasadnienia.
 
 Zaimplementowane rozwiązanie pozwala na osiągnięcie dobrych rezultatów. 
-Jednakże, aby rozwiązanie mogło poprawić swój wynik niezbędne jest zaimplementowanie części programowej w~ sposób wydajny np. wykorzystując język \emph{C} wraz z~ przetwarzaniem wielowątkowym.
-Zaproponowane typy akceleratorów można poszerzyć m.in. o~ operację pełnej konwolucji.
+Jednakże, aby możliwe było poprawienie rezultatu niezbędne jest zaimplementowanie części programowej w~sposób wydajny np. wykorzystując język \emph{C} wraz z~przetwarzaniem wielowątkowym.
+Na etapie uczenia zastosowano funkcję \emph{GCIoU} \eqref{eq:gciou}, której rezultaty należy jeszcze porównać z innymi funkcjami bazującymi na metryce \emph{IoU}.
+Możliwe jest również zwiększenie dokładności obliczeń poprzez zmniejszenie stopnia kwantyzacji (zapis wykorzystujący więcej bitów).
+Dobór liczby bitów części całkowitej można spróbować zrealizować w sposób automatyczny, poprzez ustanowienie jako parametr podlegający uczeniu.
+Zaproponowane typy akceleratorów można również poszerzyć m.in. o~operację pełnej konwolucji, czy warstwy \emph{FC}.
+Ponadto proces uczenia sieci można zrealizować z np. z użyciem klastra obliczeniowego \emph{Prometeusz} z \emph{Akademickiego Centrum
+Komputerowego CYFRONET}.
+%, tym samym pozbywając rezygnując z limitów usługi \emph{GoogleColab}.

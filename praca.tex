@@ -21,7 +21,7 @@
 %\titlePL{Przygotowanie bardzo długiej i pasjonującej pracy dyplomowej w~systemie~\LaTeX}
 %\titleEN{Preparation of a very long and fascinating bachelor or master thesis in \LaTeX}
 
-\titlePL{Detekcja obiektów z~ wykorzystaniem głębokich sieci neuronowych zrealizowana na wbudowanej platformie obliczeniowej}
+\titlePL{Detekcja obiektów z~wykorzystaniem głębokich sieci neuronowych zrealizowana na wbudowanej platformie obliczeniowej}
 \titleEN{Object detection using deep neural networks implemented on an embedded computing platform}
 
 
@@ -61,13 +61,12 @@
 	
 	\begin{abstractpage}
     \begin{abstract}{polish}
-        W~ pracy przedstawiono pełen proces projektowania systemu detekcji opartego o~ głębokie sieci neuronowe z~ przeznaczeniem sprzętowej implementacji.
-        Opracowany system jest realizowany na potrzeby konkursu \emph{2021 DAC SDC}.
-        Zadaniem jest zaprojektowanie rozwiązania o~ dużej dokładności, wysokiej przepustowości oraz o~ niewielkim zużyciu energii. 
-        Zostały przedstawione wymagania oraz założenia konkursu, a~ także  docelowa platforma -- \emph{Avnet Ultra96 V2}. 
-        Dokonano przeglądu dostępnych rozwiązań klasycznych oraz opartych o~ sieci neuronowe, w~ szczególności rozwiązań energooszczędnych. 
-        Przedstawiono proces projektowania architektury sieci, wraz z~ treningiem oraz kwantyzacją. 
-        Opisano implementację akceleratora sprzętowego, a~także próby optymalizacji zużycia energii. 
+        W~pracy przedstawiono pełen proces projektowania sprzętowej implementacji systemu detekcji opartego o~głębokie sieci neuronowe na potrzeby konkursu \emph{2021 DAC SDC}.
+        Celem było zaproponowanie rozwiązania o~dużej dokładności, wysokiej przepustowości oraz o~niewielkim zużyciu energii. 
+        Na wstępnie omówiono wymagania oraz założenia konkursu, docelową platformę -- \emph{Avnet Ultra96 V2}, a~także dokonano przeglądu dostępnych rozwiązań klasycznych oraz opartych o~sieci neuronowe, w~szczególności rozwiązań energooszczędnych. 
+        Następnie przedstawiono proces projektowania architektury sieci, wraz z~treningiem i~kwantyzacją oraz opisano implementację akceleratora sprzętowego, jak również próby optymalizacji zużycia energii. 
+        W~rezultacie uzyskano dokładność detekcji 0.7015 mierzoną współczynnikiem \emph{IoU}, przy przepustowości $72.7$ \emph{fps} oraz zużyciu energii $2739 J$ dla $52500$ obrazów.
+        
         
         \bigskip
         \textbf{Słowa kluczowe:}   głębokie konwolucyjne sieci neuronowe, system wizyjny, detekcja obiektów, kwantyzowane sieci neuronowe, akcelerator sprzętowy
@@ -86,14 +85,12 @@
     \bigskip
     \bigskip
     \begin{abstract}{english}
-        In this work, the full process of designing a~ detecton system based on deep neural networks for hardware implementation.
-        The developed system is implemented for the \emph{2021 DAC SDC} competition.
-        The task is to design a~ solution with high accuracy, high throughput and low energy consumption.
-        The requirements and assumptions of the competition were presented, as well as the target platform \emph{Avnet Ultra96 V2}.
-        The available classic and neural network-based solutions, in particular energy-saving solutions, have been reviewed.
-        The process of designing network architecture were shown with training and quantiaztion.
-        Hardware accelerator implementation is described, as well as attempts to optimize energy consumption.  
-        \bigskip
+        This work presents the full process of designing hardware implementation of a~detecton system based on deep neural networks for the \emph{2021 DAC SDC} competition.
+        The aim was to design a~solution with high accuracy, high throughput and low energy consumption.
+        The requirements and assumptions of the competition and the target platform - \emph{Avnet Ultra96 V2}  were initially discussed, as well as the available classic solutions and solutions based on neural networks, especially energy-saving solutions, were reviewed.
+        Next, the process of designing the network architecture is presented, along with training and quantization, and the implementation of a~hardware accelerator as well as attempts to optimize energy consumption are described.
+        The obtained result was the detection accuracy of $0.7015$, measured with the \emph{IoU} coefficient, with a~throughput of $72.7$ \emph{fps} and energy consumption of $2739 J$ for $52 500$ images. 
+         \bigskip
        
         \textbf{Keywords:} Deep Convolutional Neural Networks, vision system, object detection, Quantized Neural Networks, hardware accelerator
     \end{abstract}
@@ -117,8 +114,8 @@
 	\include{rozdzial7}
 
 	% itd.
-	% \appendix
-	% \include{dodatekA}
+	\appendix
+	\include{dodatek_A}
 	% \include{dodatekB}
 	% itd.
 	

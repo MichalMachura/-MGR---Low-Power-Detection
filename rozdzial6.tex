@@ -3,24 +3,26 @@
 % Ewaluacja po implementacji sprzętowej. 
 % Optymalizacja fps / energii.
 
-W rozdziale \ref{ch:LN} wyznaczono model sieci \emph{LittleNet}. 
+W rozdziale \ref{ch:LN} zaproponowano model sieci \emph{LittleNet}. 
 Architektura ta osiąga wartość $IoU = 0.71$ (dla zbioru testowego). 
-Sieć została zaimplementowana sprzętowo co omówiono w~ rozdziale \ref{cha:Implementacja}.
-Rozwiązanie to jednak należy sprawdzić pod kątem dokładności detekcji (poprawności z~ modelem programowym), przepustowości oraz zużycia energii, a~ także dokonać próby optymalizacji ich optymalizacji. 
+Sieć ta została następnie zaimplementowana sprzętowo co omówiono w~rozdziale \ref{cha:Implementacja}.
+Rozwiązanie to jednak należy sprawdzić pod kątem dokładności detekcji (poprawności z~modelem programowym), przepustowości oraz zużycia energii, a~także dokonać próby ich optymalizacji. 
 
 
 \section{Ewaluacja}
-Celem sprawdzenia zaprojektowanego rozwiązania wykorzystano zaimplementowaną aplikację sterującą (rozdział \ref{ch:sterowanie}).
+
+W celu sprawdzenia zaprojektowanego rozwiązania wykorzystano zaimplementowaną aplikację sterującą (rozdział \ref{ch:sterowanie}).
 Aplikacja pozwala na pomiar czasu przetwarzania oraz pomiar energii.
 Aby możliwe było sprawdzenie dokładności otrzymanych rezultatów zaimplementowano funkcję obliczającą wartość metryki $IoU$ względem wartości referencyjnych.
 
 Wstępne wyniki ewaluacji dawały inne rezultaty niż model programowy.
-Dalsza analiza pozwoliła stwierdzić, iż model programowy wykorzystywał operacje zmiennoprzecinkowe do przeskalowania rozmiaru obrazu podawanego na wejścia sieci.
+W trakcie analizy stwierdzono, iż model programowy wykorzystywał operacje zmiennoprzecinkowe do przeskalowania rozmiaru obrazu podawanego na wejścia sieci.
 Wykorzystanie do tego celu liczb całkowitych nieznacznie pogorszyło wynik.
-Finalnie oba modele dawały identyczne rezultaty w~ postaci $IoU = 0.7015$, 
+Finalnie oba modele dawały identyczne rezultaty w~postaci $IoU = 0.7015$, 
 Wykorzystano tutaj ośmiokrotne zrównoleglenie warstw \emph{PW} pozwalające na osiągnięcie średnich wartości przepustowości $fps = 52.5$ oraz zużycia energii $e = 3652 J$ (wartość dla $52 500$ obrazów). 
 Uzyskana dokładność oraz przepustowość pozwalają na osiągnięcie maksymalnych wartości funkcji \eqref{eq:iou_score} oraz \eqref{eq:fps_score}.
-Na rysunku \ref{fig:results} przedstawiono rezultaty detekcji dla wybranych obrazów wchodzących w~ skład zbioru testowego.
+Jednakże uzyskana wartość \emph{IoU} przekracza wartość progową jedynie w niewielkim stopniu.
+Na rysunku \ref{fig:results} przedstawiono rezultaty detekcji dla wybranych obrazów wchodzących w~skład zbioru testowego.
 
 \begin{figure}
     \centering
@@ -31,6 +33,7 @@ Na rysunku \ref{fig:results} przedstawiono rezultaty detekcji dla wybranych obra
 \end{figure}
 
 \section{Optymalizacja}
+
 Zakładając, iż otrzymana dokładność detekcji została by osiągnięta na zbiorze tajnym, optymalizacja może zostać ograniczona jedynie zmian parametrów akceleracji, takich jak zrównoleglenie $p$ warstw \emph{PW} czy częstotliwość zegara $f$ dla logiki programowalnej (dotychczas używana była częstotliwość $100$ MHz).
 Łączną moc układu można wyrazić wzorem \eqref{eq:power}, gdzie $P_{PL}(p,f)$ to moc logiki programowalnej oraz $P_{PS}(p,f)$ moc układu procesorowego.
 \begin{equation}
@@ -43,14 +46,14 @@ e(p,f) = \frac{N}{fps(p,f)}(P_{PS} + P_{PL}(p,f))
 \label{eq:energy}
 \end{equation}
 
-Ponadto przybliżoną moc $P_{PL}(p,f)$ wyrazić można przez \eqref{eq:ppl}, zakładając liniowy przyrost mocy od $p$ dla warstw \emph{PW} oraz zależność mocy od częstotliwości przyjmując za $\beta(f)$. Przez $P_{DW}$ oraz $P_{PW}$ oznaczono moc akceleratorów (wszystkich warstw danego typu) odpowiednio \emph{DW} i~ \emph{PW} (dla akceleracji z~ użyciem tylko jednego \emph{PW\_PU}).
+Ponadto przybliżoną moc $P_{PL}(p,f)$ wyrazić można przez \eqref{eq:ppl}, zakładając liniowy przyrost mocy od $p$ dla warstw \emph{PW} oraz zależność mocy od częstotliwości przyjmując za $\beta(f)$. Przez $P_{DW}$ oraz $P_{PW}$ oznaczono moc akceleratorów (wszystkich warstw danego typu) odpowiednio \emph{DW} i \emph{PW} (dla akceleracji z~użyciem tylko jednego \emph{PW\_PU}).
 \begin{equation}
 P_{PL}(p,f) = \beta(f) (P_{DW} + p P_{PW})
 \label{eq:ppl}
 \end{equation}
 
 Przybliżony stosunek czasu trwania obliczeń warstwy \emph{DW} do czasu trwania całego cyklu przetwarzania wyrażono poprzez $\alpha(p)$. 
-Wartości stałe stanowią liczbę maksymalnych wymaganych odczytów z~ pamięci RAM dla  warstw \emph{PW} - 10 444 800 (stan 1 i 3) oraz \emph{DW} - 460 000 (stan 2 i 4).
+Wartości stałe stanowią liczbę maksymalnych wymaganych odczytów z~pamięci RAM dla  warstw \emph{PW} -- 10 444 800 (stan 1 i 3) oraz \emph{DW} -- 460 000 (stan 2 i 4).
 \begin{equation}
 \alpha(p) = \frac{460 000}{460 000 + \frac{10 444 800}{p}} = \frac{p}{p+22.7}
 \label{eq:alpha}
@@ -92,12 +95,13 @@ p_1 < p_2
 \end{equation}
 
  co jest zawsze prawdziwe jako założenie. 
- Wnioskując stwierdza się, iż im wyższy stopnień zrównoleglenia tym mniejsze zużycie energii przetwarzania obrazu.
- W~ tym celu ustalono $p = 16$ (jako maksymalne zrównoleglenie pierwszej warstwy \emph{PW}) oraz przeprowadzono ewaluacje rozwiązania.
- W~ rezultacie uzyskano $fps = 72.7$ oraz zużycie energii $e = 2739 J$.
- Co jest zgodne z~ wyznaczonymi nierównościami, pomimo zastosowania znacznych przybliżeń.
+ Wnioskując stwierdza się, iż im wyższy stopnień zrównoleglenia tym osiągane jest mniejsze zużycie energii przetwarzania obrazu.
+ W~tym celu ustalono $p = 16$ (jako maksymalne zrównoleglenie pierwszej warstwy \emph{PW}) oraz przeprowadzono ewaluację rozwiązania.
+ W~rezultacie uzyskano $fps = 72.7$ oraz zużycie energii $e = 2739 J$.
+ Co jest zgodne z~wyznaczonymi nierównościami, pomimo zastosowania znacznych przybliżeń.
  
- Ponadto dla \eqref{eq:energy_simple} przyjmując $p$ jako stałą oraz  $P_{PL}$ jako moc dynamiczną bez straty ogólności (nie znana jest moc $P_{PS}$), wówczas zależność mocy od częstotliwości może zostać wyrażona poprzez \eqref{eq:dynf} \cite{dynamic_power} oraz zużycie energii poprzez \eqref{eq:energy_simple_f}. 
+Ponadto dla \eqref{eq:energy_simple} przyjmując $p$ jako stałą oraz  $P_{PL}$ jako moc dynamiczną bez straty ogólności (nie znana jest moc $P_{PS}$).
+Zależność mocy $P_{PL}$ od częstotliwości $f$ może zostać wyrażona poprzez \eqref{eq:dynf} \cite{dynamic_power} oraz zużycie energii poprzez \eqref{eq:energy_simple_f}. 
 \begin{equation}
 \beta(f) = \frac{f}{f_0}
 \label{eq:dynf}
@@ -124,28 +128,30 @@ e(p, f_2) < e(p,f_1)
 f_1 < f_2
 \end{equation}
 co jest zawsze prawdziwe jako stawiane założenie.
-Wnioskując można stwierdzić, iż im większa jest częstotliwość przetwarzania w~ logice programowalnej, tym uzyskiwane jest mniejsze zużycie energii.
+
+Wnioskując można stwierdzić, iż zastosowanie większej częstotliwość pracy akceleratora, tym uzyskiwane jest mniejsze zużycie energii całego systemu przetwarzania.
 Wartość częstotliwości musi jednak zapewniać prawidłowe wykonanie obliczeń.
-Ponadto niejawnie zakładano, iż część przetwarzania realizowana przez system procesorowy będzie wykonana w~ czasie krótszym, niż obliczenia logiki programowalnej.
+Ponadto niejawnie zakładano, iż część przetwarzania realizowana przez system procesorowy będzie wykonana w~czasie krótszym, niż obliczenia logiki programowalnej.
 Eksperymentalnie sprawdzono, iż maksymalna częstotliwość pracy akceleratora nie może być większa niż 215 MHz.
 Obecna implementacja programowa nie pozwoliła jednak na uzyskanie wyższej przepustowości niż dotychczas.
 Dla wspomnianej maksymalnej częstotliwości uzyskano $fps = 71.0$ oraz zużycie energii $e = 2798 J$.
 
-Aby sprawdzić zużycie energii wynikające z~ pracy akceleratora, postanowiono pominąć etap odczytu danych oraz późniejszego przetwarzania z~ użyciem systemu procesorowego.
+Aby sprawdzić zużycie energii wynikające z~pracy akceleratora, postanowiono pominąć etap odczytu danych oraz późniejszego przetwarzania z~użyciem systemu procesorowego.
 Uzyskano wówczas $fps = 183 $ oraz $e = 1070 J$, co dowodzi słuszności wcześniejszych rozważań.
  
  
 \begin{figure}
     \centering
     \includegraphics[width=0.9\linewidth]{images/zasoby.png}
-    \caption{Zużycie zasobów - zrzut ekranu z~ programu \emph{Vivado 2019.1}.}
+    \caption{Zużycie zasobów -- zrzut ekranu z~programu \emph{Vivado 2019.1}.}
     \label{fig:resources}
 \end{figure}
 
 Ostateczne rozwiązanie zostało zaimplementowane ze zrównolegleniem $p = 16$.
 Na rysunku \ref{fig:resources} przestawiono zużycie zasobów logiki programowalnej.
 Implementacja wykorzystuje niemal wszystkie bloki pamięci \emph{BRAM} oraz znaczą część dostępnych \emph{DSP}.
-Uzyskanie ostatecznie lepszych rezultatów jest możliwe, jedynie poprzez bardziej wydajną implementację części programowej.
+Uzyskanie ostatecznie lepszych rezultatów dla tej architektury jest możliwe, jedynie poprzez bardziej wydajną implementację części programowej.
 
 
 
+%TODO
