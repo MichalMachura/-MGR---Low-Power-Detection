@@ -1,0 +1,109 @@
+
+#2
+Na wstępie przezentcji będą przedstawione cele pracy
+oraz stawiane jej wymagania i docelowa platforma.
+Następnie zostanie przedstawiony proces implementacji sprzętowej DNN,
+zaproponowana architektura, a także zaprojektowany akcelerator sprzętowy.
+Na koniec zostaną przedstawione uzyskane wyniki.
+
+
+#3
+Głównym celem pracy jest sprzętowa implementacja 
+DNN wykorzystywanch do detekcji obiektów.
+Zadanie jest realizowane na układzie z Zynq UtraScale+ MPSoC.
+
+Opracowywany system detekcji jest realizowany na potrzeby konkursu
+2021 DAC SDC.
+Kryteriami oceny są:
+- energooszczędność,
+- dokładność,
+- oraz szybkość przetwarzania.
+
+#4 
+Jednym z wymagań czy założeń wspomnianego konkursu jest nauczenie sieci 
+na dostarczonym przez organizatorów zbiorze.
+
+Zbiór skałda się z obrazów o wymiarach 640x360 pikseli.
+W skład wchodzi 12 kategorii / 95 sekwencji zarejestrowanych przez drona.
+
+Zbiór osiaga rozmiar ponad 93 tys. wraz 
+z opisem położenia i wymiarów obiektów znajdujących się na obrazach.
+
+Na każdym z obrazów z kolei znajduje się tylko jeden obiekt.
+Celem detekcji jest wykrycie na danym obrazie jedngo obiektu bez jego klasyfikacji.
+
+Można tu powiedzieć, iż zadaniem jest wybór obiektu zainteresowania.
+
+#5
+Ocena rozwiązania jest dokonywana na podstawie przedstawionego wzoru,
+wiążącego zależność energii, dokładności oraz szybkości.
+
+Śrowisko znajduje się na platformie Ultra96-v2, z systemem Linux(PetaLinux) PYNQ oraz serwerem Jupyter Not.
+
+
+#6 
+Wspomniana platforma sprzętowa to płytka AVNET Ultra96-v2.
+Najważniejszy układem jest układ Zynq UltraScale+ MPSoC ZU3EG.
+Dostępne są 2 GB RAM w wersji LowPower-DDR4.
+Dostępny jest slot karty pamieci microSD 16GB oraz porty IO.
+
+Ponadto na możliwa jest komunikacja poprzez moduł wifi oraz USB 3.0. 
+co jest wykorzystywane podczas ewaluacji rozwiązania.
+
+
+#7
+Implementacja sprzętowa jest niejako wieloetapowym procesem.
+Rozpoczynającym się od treningu modelu flp, następnie kwantyzując, 
+a następnie dokonując impl. sprzętowej.
+
+Wielokrotnie w czasie procesu implementacji wymagan jest powrót 
+do wcześniejszej wersji modelu i jego korekta, co niesty wydłuża łączny czas realizacji.
+
+#8
+Model FP oraz proces kwantyzacji realizowany był w ramach frameworka 
+-PyTorch.
+
+Etap kwantyzacji został przeprowadzony z użyciem:
+- Bravitas dla PyTorch
+
+Implementacje sprzętową zrealizowano z użyciem języka:
+- System Verilog
+
+#9
+Do celu realizacji zadania zaprojektowano architekturę:
+LittleNet
+wykorzystującą 
+6x wielokrotna konwolucja DW
+7x konw. PW
+
+Archtektura posiada niespełna 134 tys. parametrów.
+Ponadto została skwantyzowana do liczb stałoprzecinkowych 8b
+
+#10
+Uzyskany model kwantyzowany został poddany 
+własnej implementacji sprzętowej
+w postaci architektury potokowej gruboziarnistej.
+wyróżniono 3 akceleratory:
+- IL
+- DW
+- PW w różnych konfiguracjach.
+
+
+#11
+Uzyskano:
+- dokładność 0.7015 iou
+- 72 fps
+- 2800 J
+dla 52500 obrazów.
+
+Co dawałoby wartość funkcji oceny 8.75, 
+jeśli uzyskanoby takie reazultaty dla zbioru tajnego.
+
+Wówczas w dotychczasowej klasyfikacji uzyskując 3 miejsce / 120.
+
+
+#12
+"Źródła grafik"
+
+#12
+KONIEC
