@@ -15,3 +15,4 @@ Next, the process of designing the network architecture is presented, along with
 The obtained result was the detection accuracy of __0.7015__, measured with the *IoU* coefficient, with a throughput of __72.7 *fps*__ and energy consumption of __2739 *J*__ for __52 500__ images. 
  
  
+![Detection results](images/results.png "Detection resuts")
