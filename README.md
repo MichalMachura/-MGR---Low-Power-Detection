@@ -1,4 +1,4 @@
-# Detekcja obiektów z~wykorzystaniem głębokich sieci neuronowych zrealizowana na wbudowanej platformie obliczeniowej.
+# Detekcja obiektów z wykorzystaniem głębokich sieci neuronowych zrealizowana na wbudowanej platformie obliczeniowej.
 
 W pracy przedstawiono pełen proces projektowania sprzętowej implementacji systemu detekcji opartego o głębokie sieci neuronowe na potrzeby konkursu 2021 DAC SDC.
 Celem było zaproponowanie rozwiązania o dużej dokładności, wysokiej przepustowości oraz o niewielkim zużyciu energii. 
