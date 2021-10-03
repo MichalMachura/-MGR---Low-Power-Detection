@@ -1,6 +1,4 @@
-# -MGR---Low-Power-Detection
-
-Detekcja obiektów z~wykorzystaniem głębokich sieci neuronowych zrealizowana na wbudowanej platformie obliczeniowej.
+# Detekcja obiektów z~wykorzystaniem głębokich sieci neuronowych zrealizowana na wbudowanej platformie obliczeniowej.
 
 W pracy przedstawiono pełen proces projektowania sprzętowej implementacji systemu detekcji opartego o głębokie sieci neuronowe na potrzeby konkursu \emph{2021 DAC SDC}.
 Celem było zaproponowanie rozwiązania o dużej dokładności, wysokiej przepustowości oraz o niewielkim zużyciu energii. 
@@ -8,7 +6,7 @@ Na wstępnie omówiono wymagania oraz założenia konkursu, docelową platformę
 Następnie przedstawiono proces projektowania architektury sieci, wraz z treningiem i kwantyzacją oraz opisano implementację akceleratora sprzętowego, jak również próby optymalizacji zużycia energii. 
 W rezultacie uzyskano dokładność detekcji 0.7015 mierzoną współczynnikiem \emph{IoU}, przy przepustowości $72.7$ \emph{fps} oraz zużyciu energii $2739 J$ dla $52500$ obrazów.
 
-Object detection using deep neural networks implemented on an embedded computing platform.
+# Object detection using deep neural networks implemented on an embedded computing platform.
 
 This work presents the full process of designing hardware implementation of a detecton system based on deep neural networks for the \emph{2021 DAC SDC} competition.
 The aim was to design a solution with high accuracy, high throughput and low energy consumption.
